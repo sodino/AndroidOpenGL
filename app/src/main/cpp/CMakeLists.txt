@@ -22,7 +22,7 @@ add_library(
         SHARED
 
         # Provides a relative path to your source file(s).
-        printOpenGL.cpp
+        print/printOpenGL.cpp
         myOpenGL.cpp
 )
 

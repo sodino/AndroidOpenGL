@@ -1,6 +1,6 @@
 #include <jni.h>
 #include <string>
-#include "printOpenGL.h"
+#include "print/printOpenGL.h"
 
 extern "C"
 JNIEXPORT void JNICALL
