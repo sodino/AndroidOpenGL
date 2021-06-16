@@ -20,15 +20,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * A native method that is implemented by the 'native-lib' native library,
+     * A native method that is implemented by the 'myOpenGL' native library,
      * which is packaged with this application.
      */
     external fun stringFromJNI(): String
 
     companion object {
-        // Used to load the 'native-lib' library on application startup.
+        // Used to load the 'myOpenGL' library on application startup.
         init {
-            System.loadLibrary("native-lib")
+            System.loadLibrary("myOpenGL")
         }
     }
 }
