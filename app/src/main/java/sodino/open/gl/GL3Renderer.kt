@@ -6,6 +6,8 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 class GL3Renderer : GLSurfaceView.Renderer {
+    private val jni = JniHandler()
+
     override fun onSurfaceCreated(gl: GL10, config: EGLConfig) {
         val version = gl.glGetString(GL10.GL_VERSION)
         val vendor = gl.glGetString(GL10.GL_VENDOR)
@@ -16,13 +18,14 @@ class GL3Renderer : GLSurfaceView.Renderer {
         Log.d("appGL", "renderer=$renderer")
         Log.d("appGL", "extensions=$extensions")
 
-        val jni = JniHandler()
         jni.printOpenGLInfos()
     }
 
     override fun onSurfaceChanged(gl: GL10, width: Int, height: Int) {
+        jni.resizeGL(width, height)
     }
 
     override fun onDrawFrame(gl: GL10) {
+        jni.renderGL()
     }
 }
