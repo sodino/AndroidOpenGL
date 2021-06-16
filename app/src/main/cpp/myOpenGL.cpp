@@ -1,10 +1,9 @@
 #include <jni.h>
 #include <string>
+#include "printOpenGL.h"
 
-extern "C" JNIEXPORT jstring JNICALL
-Java_sodino_open_gl_MainActivity_stringFromJNI(
-        JNIEnv* env,
-        jobject /* this */) {
-    std::string hello = "Hello from C++";
-    return env->NewStringUTF(hello.c_str());
+extern "C"
+JNIEXPORT void JNICALL
+Java_sodino_open_gl_JniHandler_printOpenGLInfos(JNIEnv *env, jobject thiz) {
+    printOpenGLInfos();
 }

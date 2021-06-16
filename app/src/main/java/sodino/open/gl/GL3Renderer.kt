@@ -16,8 +16,8 @@ class GL3Renderer : GLSurfaceView.Renderer {
         Log.d("appGL", "renderer=$renderer")
         Log.d("appGL", "extensions=$extensions")
 
-//        val jni = JniHandler()
-//        jni.printOpenGLInfos()
+        val jni = JniHandler()
+        jni.printOpenGLInfos()
     }
 
     override fun onSurfaceChanged(gl: GL10, width: Int, height: Int) {
