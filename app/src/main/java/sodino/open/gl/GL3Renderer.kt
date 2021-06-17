@@ -22,10 +22,17 @@ class GL3Renderer : GLSurfaceView.Renderer {
     }
 
     override fun onSurfaceChanged(gl: GL10, width: Int, height: Int) {
+        Log.d("appGL", "Renderer : onSurfaceChanged w=$width, h=$height")
+        jni.initGL()
         jni.resizeGL(width, height)
+
     }
 
     override fun onDrawFrame(gl: GL10) {
         jni.renderGL()
+    }
+
+    fun destroyGL() {
+        jni.destroyGL()
     }
 }

@@ -3,6 +3,8 @@ package sodino.open.gl
 import android.content.Context
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
+import android.util.Log
+import android.view.SurfaceHolder
 
 class GL3SurfaceView : GLSurfaceView {
     constructor(context : Context) : super(context) {}
@@ -16,5 +18,21 @@ class GL3SurfaceView : GLSurfaceView {
         setEGLConfigChooser(8, 8, 8, 0, 16, 0)
         renderer = GL3Renderer()
         setRenderer(renderer)
+    }
+
+    override fun surfaceCreated(holder: SurfaceHolder) {
+        super.surfaceCreated(holder)
+        Log.d("appGL", "SurfaceView : surfaceCreated")
+    }
+
+    override fun surfaceChanged(holder: SurfaceHolder, format: Int, w: Int, h: Int) {
+        super.surfaceChanged(holder, format, w, h)
+        Log.d("appGL", "SurfaceView : surfaceChanged w=$w, h=$h")
+    }
+
+    override fun surfaceDestroyed(holder: SurfaceHolder) {
+        super.surfaceDestroyed(holder)
+        Log.d("appGL", "SurfaceView : surfaceDestroyed")
+        renderer.destroyGL()
     }
 }

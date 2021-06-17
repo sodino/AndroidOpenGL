@@ -16,14 +16,15 @@ project("gl")
 
 add_library(
         # Sets the name of the library.
-        myOpenGL
+        AppJNI
 
         # Sets the library as a shared library.
         SHARED
 
         # Provides a relative path to your source file(s).
         print/printOpenGL.cpp
-        myOpenGL.cpp
+        AppJNI.cpp
+        AppOpenGL.cpp
 )
 
 # Searches for a specified prebuilt library and stores the path as a
@@ -45,7 +46,7 @@ find_library( # Sets the name of the path variable.
 
 target_link_libraries(
         # Specifies the target library.
-        myOpenGL
+        AppJNI
         android
         EGL
         GLESv2
