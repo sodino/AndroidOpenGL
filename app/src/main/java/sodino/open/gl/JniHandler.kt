@@ -17,4 +17,5 @@ class JniHandler {
     external fun resizeGL(width: Int, height: Int)
     external fun renderGL()
     external fun destroyGL()
+    external fun onlyDrawLine(onlyLine : Boolean)
 }

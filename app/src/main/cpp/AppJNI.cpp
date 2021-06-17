@@ -31,3 +31,10 @@ JNIEXPORT void JNICALL
 Java_sodino_open_gl_JniHandler_destroyGL(JNIEnv *env, jobject thiz) {
     app_destroyGL();
 }
+
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_sodino_open_gl_JniHandler_onlyDrawLine(JNIEnv *env, jobject thiz, jboolean onlyLine) {
+    app_onlyDrawLine(onlyLine);
+}

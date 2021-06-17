@@ -11,5 +11,6 @@ void app_resizeGL(jint width, jint height);
 void app_renderGLFrame();
 void app_initGL();
 void app_destroyGL();
+void app_onlyDrawLine(jboolean);
 
 #endif //ANDROIDOPENGL_APPOPENGL_H

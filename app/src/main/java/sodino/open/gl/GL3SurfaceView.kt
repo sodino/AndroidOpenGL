@@ -35,4 +35,8 @@ class GL3SurfaceView : GLSurfaceView {
         Log.d("appGL", "SurfaceView : surfaceDestroyed")
         renderer.destroyGL()
     }
+
+    fun onlyDrawLine(onlyLine: Boolean) {
+        renderer.onlyDrawLine(onlyLine)
+    }
 }

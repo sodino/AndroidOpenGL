@@ -38,6 +38,10 @@ unsigned int VAO = 0;           // vertex array object
 unsigned int VBO = 0;           // vertex buffer object
 // end : gl variable
 
+// begin : logic variable
+bool onlyDrawLine = false;
+// end : logci variable
+
 static void checkGLError(const char* tag) {
     for (GLint error = glGetError(); error; error = glGetError()) {
         logD("%s : glError=0x%x", tag, error);
@@ -167,7 +171,8 @@ void app_renderTriangle() {
 
     // draw primitives using the currently active shader,
     // the previously defined vertex attribute configuration
-    glDrawArrays(GL_TRIANGLES, 0, VERTEX_COUNT);
+    GLenum glEnum = onlyDrawLine ? GL_LINE_LOOP : GL_TRIANGLES;
+    glDrawArrays(glEnum, 0, VERTEX_COUNT);
 }
 
 void app_renderGLFrame() {
@@ -218,10 +223,6 @@ void app_initGL() {
     glBindVertexArray(0);
 
     // end : configuration for VAO & VBO
-
-
-    // uncomment this call to draw in wireframe polygons.
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void app_destroyGL() {
@@ -234,4 +235,8 @@ void app_destroyGL() {
     glDeleteBuffers(1, &VBO);
     VAO = 0;
     VBO = 0;
+}
+
+void app_onlyDrawLine(jboolean onlyLine) {
+    onlyDrawLine = onlyLine;
 }

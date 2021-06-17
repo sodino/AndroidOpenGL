@@ -23,5 +23,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         />
-
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnDrawLineSwitch"
+        android:textAllCaps="false"
+        app:layout_constraintTop_toTopOf="@id/surfaceView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="onlyDrawLine : FALSE"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

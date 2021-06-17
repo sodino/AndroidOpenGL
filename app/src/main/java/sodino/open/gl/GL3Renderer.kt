@@ -35,4 +35,8 @@ class GL3Renderer : GLSurfaceView.Renderer {
     fun destroyGL() {
         jni.destroyGL()
     }
+
+    fun onlyDrawLine(onlyLine : Boolean) {
+        jni.onlyDrawLine(onlyLine)
+    }
 }
