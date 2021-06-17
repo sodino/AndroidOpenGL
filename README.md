@@ -1,5 +1,11 @@
 # AndroidOpenGL
 
+## feature/openGL_renderClearColor
+ 2021.06.16
+Understand and practise of function `glClearColor` and `glClear`.
+
+preview :  
+![renderClearColor.gif](./preview/openGL.renderClearColor.gif)
 
 ## feature/print_openGL_infos
  2021.06.16  
