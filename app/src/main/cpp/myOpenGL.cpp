@@ -15,8 +15,9 @@ void renderGLFrame() {
         isAdd = true;
         rgb = 0.0f;
     }
-
+    // 'glClearColor' a confusing function name. specify color value for 'glClear' action
     glClearColor(rgb, rgb, rgb, 1.0f);
+    // write color specified by 'glClearColor'
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
