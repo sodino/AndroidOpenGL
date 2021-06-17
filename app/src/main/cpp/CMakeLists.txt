@@ -14,14 +14,17 @@ project("gl")
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
 
-add_library( # Sets the name of the library.
-             native-lib
+add_library(
+        # Sets the name of the library.
+        myOpenGL
 
-             # Sets the library as a shared library.
-             SHARED
+        # Sets the library as a shared library.
+        SHARED
 
-             # Provides a relative path to your source file(s).
-             native-lib.cpp )
+        # Provides a relative path to your source file(s).
+        print/printOpenGL.cpp
+        myOpenGL.cpp
+)
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -40,9 +43,12 @@ find_library( # Sets the name of the path variable.
 # can link multiple libraries, such as libraries you define in this
 # build script, prebuilt third-party libraries, or system libraries.
 
-target_link_libraries( # Specifies the target library.
-                       native-lib
-
-                       # Links the target library to the log library
-                       # included in the NDK.
-                       ${log-lib} )
+target_link_libraries(
+        # Specifies the target library.
+        myOpenGL
+        android
+        EGL
+        GLESv2
+        # Links the target library to the log library
+        # included in the NDK.
+        ${log-lib})
