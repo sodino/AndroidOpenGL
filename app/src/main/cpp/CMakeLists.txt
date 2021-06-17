@@ -49,7 +49,7 @@ target_link_libraries(
         AppJNI
         android
         EGL
-        GLESv2
+        GLESv3
         # Links the target library to the log library
         # included in the NDK.
         ${log-lib})
