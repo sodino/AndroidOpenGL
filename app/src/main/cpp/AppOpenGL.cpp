@@ -33,6 +33,9 @@ const GLfloat gTriangleVertices[] =
 // begin : gl variable
 GLuint gProgram;
 GLuint gPositionLocation;
+
+unsigned int VAO = 0;           // vertex array object
+unsigned int VBO = 0;           // vertex buffer object
 // end : gl variable
 
 static void checkGLError(const char* tag) {
@@ -154,9 +157,13 @@ void app_renderTriangle() {
         return;
     }
 
+    // as we only have a single VAO,
+    // there's no need to `glUseProgram` and `glBindVertexArray` every time,
+    // but we'll do so just keep things a bit more organized.
+
     // activate gProgram, every shader and rendering call use this program
     glUseProgram(gProgram);
-    checkGLError("glUserProgram");
+    glBindVertexArray(VAO);
 
     // draw primitives using the currently active shader,
     // the previously defined vertex attribute configuration
@@ -179,20 +186,42 @@ void app_initGL() {
         logD("createGLProgram failed.");
         return;
     }
+
+
+    // start : configuration for VAO & VBO
+
+    // generator VAO first then VBO, because any subsequent vertex attribute calls after `glGenVertexArrays` wil be stored inside the VAO
+    glGenVertexArrays(1, &VAO);
+    checkGLError("glGenVertexArray");
+    glGenBuffers(1, &VBO);
+    checkGLError("glGenBuffers");
+    // bind the VAO first, then bind and set vertex buffers(s), and then configure vertex attribute(s).
+    glBindVertexArray(VAO);
+    checkGLError("glBindVertexArray");
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(gTriangleVertices), gTriangleVertices, GL_STATIC_DRAW);
+    checkGLError("glBindBuffer & glBufferData");
+
     gPositionLocation = glGetAttribLocation(gProgram, "vPosition");
     checkGLError("glGetAttribLocation");
     logD("glGetAttribLocation(vPosition)=%d", gPositionLocation);
-
-
-    // the last parameter has the type of `pointer` just for compatibility.
-    // In legacy OpenGL, specify a data pointer directly.
-    // In this case it must not be bound a buffer object, because the pointer should not be treated as a byte offset into the buffer.
     glVertexAttribPointer(gPositionLocation,
                         FLOAT_NUM_PER_VERTEX,
                         GL_FLOAT, GL_FALSE,
                         FLOAT_NUM_PER_VERTEX * sizeof(float),
-                        gTriangleVertices);
+                        0);
     glEnableVertexAttribArray(gPositionLocation);
+
+    // unbind
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    // end : configuration for VAO & VBO
+
+
+    // uncomment this call to draw in wireframe polygons.
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void app_destroyGL() {
@@ -200,4 +229,9 @@ void app_destroyGL() {
         glDeleteProgram(gProgram);
         gProgram = 0;
     }
+
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    VAO = 0;
+    VBO = 0;
 }
