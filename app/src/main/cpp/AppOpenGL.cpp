@@ -195,7 +195,7 @@ void app_initGL() {
 
     // start : configuration for VAO & VBO
 
-    // generator VAO first then VBO, because any subsequent vertex attribute calls after `glGenVertexArrays` wil be stored inside the VAO
+    // generate VAO first then VBO, because any subsequent vertex attribute calls after `glGenVertexArrays` wil be stored inside the VAO
     glGenVertexArrays(1, &VAO);
     checkGLError("glGenVertexArray");
     glGenBuffers(1, &VBO);

@@ -1,5 +1,18 @@
 # AndroidOpenGL
 
+## feature/openGL_helloTriangle
+ 2021.06.17
+
+use VAO/VBO to draw triangle
+
+Learning focus :
+* generate VAO first then VBO, because any subsequent vertex attribute calls after `glGenVertexArrays` wil be stored inside the VAO
+* bind the VAO first, then bind and set vertex buffers(s), and then configure vertex attribute(s). Finally, DON'T forget to unbind : `glBind****(0)`.
+* when doing rendering, there's no need to `glUseProgram` and `glBindVertexArray` every time, BUT we'll do so JUST keep things a bit more organized.
+
+  preview :
+<img src="./preview/hello.triangle.2mode.png" alt="drawing" width="500"/>
+
 ## feature/openGL_helloTriangle_legacy
  2021.06.17
 
