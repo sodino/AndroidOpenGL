@@ -15,7 +15,7 @@ const char* gVertexShader =
         "layout(location=0) in vec4 vPosition;"
         "void main() {"
         "  gl_Position = vPosition;"
-        "}";
+        "}\0";                                              // NOTE: Ending with '\0' indicates that this is the end of a C string.
 
 const char* gFragmentShader =
         "#version 320 es\n"                                 // NOTE: add \n as a line separator
@@ -24,7 +24,7 @@ const char* gFragmentShader =
         "uniform vec4 myColor;"                             // this variable's value will be set by invoking gl api in c++ code
         "void main() {"
         "  fragColor = myColor;"
-        "}";
+        "}\0";                                              // NOTE: Ending with '\0' indicates that this is the end of a C string.
 // end : GLSL code
 
 // begin : gl vertex
@@ -38,8 +38,8 @@ const GLfloat gTriangleVertices[] =
         };
 
 unsigned int gIndices[] = {
-        0, 1, 2, // first triangle vertex index
-        0, 2, 3  // second triangle vertex index
+        0, 1, 2, // first triangle vertex indices
+        0, 2, 3  // second triangle vertex indices
 };
 // end : gl vertex
 
