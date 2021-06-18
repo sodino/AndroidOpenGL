@@ -22,12 +22,18 @@ const char* gFragmentShader =
 
 // begin : gl vertex
 #define FLOAT_NUM_PER_VERTEX 2  // the number of 'float' to define each vertex
-#define VERTEX_COUNT 3          // triangle has 3 vertices
+#define VERTEX_COUNT 6          // 2 triangles have 6 vertices
 const GLfloat gTriangleVertices[] =
-        {0.0f, 0.5f,            // top vertex
-         -0.5f, -0.5f,          // bottom left vertex
-         0.5f, -0.5f            // bottom right vertex
+        {-0.5f, 0.5f,           // top left vertex      index : 0
+         -0.5f, -0.5f,          // bottom left vertex   index : 1
+         0.5f, -0.5f,           // bottom right vertex  index : 2
+         0.5f, 0.5f             // top right vertex     index : 3
         };
+
+unsigned int gIndices[] = {
+        0, 1, 2, // first triangle vertex index
+        0, 2, 3  // second triangle vertex index
+};
 // end : gl vertex
 
 // begin : gl variable
@@ -36,6 +42,7 @@ GLuint gPositionLocation;
 
 unsigned int VAO = 0;           // vertex array object
 unsigned int VBO = 0;           // vertex buffer object
+unsigned int IBO = 0;           // index buffer object
 // end : gl variable
 
 // begin : logic variable
@@ -160,19 +167,21 @@ void app_renderTriangle() {
     if (gProgram == 0) {
         return;
     }
-
     // as we only have a single VAO,
-    // there's no need to `glUseProgram` and `glBindVertexArray` every time,
+    // there's no need to `glUseProgram` `glBindBuffer` `glBindVertexArray` every time,
     // but we'll do so just keep things a bit more organized.
 
     // activate gProgram, every shader and rendering call use this program
     glUseProgram(gProgram);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
     glBindVertexArray(VAO);
 
     // draw primitives using the currently active shader,
     // the previously defined vertex attribute configuration
     GLenum glEnum = onlyDrawLine ? GL_LINE_LOOP : GL_TRIANGLES;
-    glDrawArrays(glEnum, 0, VERTEX_COUNT);
+    // invoke `glDrawElements` instead of `glDrawArrays`
+//    glDrawArrays(glEnum, 0, VERTEX_COUNT);
+    glDrawElements(glEnum, VERTEX_COUNT, GL_UNSIGNED_INT, 0);
 }
 
 void app_renderGLFrame() {
@@ -192,13 +201,13 @@ void app_initGL() {
         return;
     }
 
-
     // start : configuration for VAO & VBO
 
     // generate VAO first then VBO, because any subsequent vertex attribute calls after `glGenVertexArrays` wil be stored inside the VAO
     glGenVertexArrays(1, &VAO);
     checkGLError("glGenVertexArray");
     glGenBuffers(1, &VBO);
+    glGenBuffers(1, &IBO);
     checkGLError("glGenBuffers");
     // bind the VAO first, then bind and set vertex buffers(s), and then configure vertex attribute(s).
     glBindVertexArray(VAO);
@@ -206,7 +215,11 @@ void app_initGL() {
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(gTriangleVertices), gTriangleVertices, GL_STATIC_DRAW);
-    checkGLError("glBindBuffer & glBufferData");
+    checkGLError("VBO glBindBuffer & glBufferData");
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(gIndices), gIndices, GL_STATIC_DRAW);
+    checkGLError("IBO glBindBuffer & glBufferData");
 
     gPositionLocation = glGetAttribLocation(gProgram, "vPosition");
     checkGLError("glGetAttribLocation");
@@ -219,6 +232,7 @@ void app_initGL() {
     glEnableVertexAttribArray(gPositionLocation);
 
     // unbind
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
@@ -233,8 +247,10 @@ void app_destroyGL() {
 
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &IBO);
     VAO = 0;
     VBO = 0;
+    IBO = 0;
 }
 
 void app_onlyDrawLine(jboolean onlyLine) {
