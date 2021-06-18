@@ -21,9 +21,8 @@ const char* gFragmentShader =
         "#version 320 es\n"                                 // NOTE: add \n as a line separator
         "precision mediump float;"
         "out vec4 fragColor;"
-        "uniform vec4 myColor;"                             // this variable's value will be set by invoking gl api in c++ code
         "void main() {"
-        "  fragColor = myColor;"
+        "  fragColor = vec4(1.0, 0.0, 1.0, 1.0);"
         "}\0";                                              // NOTE: Ending with '\0' indicates that this is the end of a C string.
 // end : GLSL code
 
@@ -46,7 +45,6 @@ unsigned int gIndices[] = {
 // begin : gl variable
 GLuint gProgram;
 GLuint gLocation_vPosition;
-GLuint gLocation_myColor;
 
 unsigned int VAO = 0;           // vertex array object
 unsigned int VBO = 0;           // vertex buffer object
@@ -55,8 +53,7 @@ unsigned int IBO = 0;           // index buffer object
 
 // begin : logic variable
 bool onlyDrawLine = false;
-float rgb = 0.0f;
-// end : logci variable
+// end : logic variable
 
 static void checkGLError(const char* tag) {
     for (GLint error = glGetError(); error; error = glGetError()) {
@@ -156,6 +153,7 @@ void app_resizeGL(jint width, jint height) {
 }
 
 void app_renderClearColor() {
+    static float rgb = 0.0f;
     static bool isAdd = true;
     rgb += (isAdd) ? 0.01f : -0.01f;
     if (rgb > 1.0f) {
@@ -183,9 +181,6 @@ void app_renderTriangle() {
     glUseProgram(gProgram);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
     glBindVertexArray(VAO);
-
-    float triangleRGB = 1.0f - rgb;  // set to be somewhat different from SurfaceView background.
-    glUniform4f(gLocation_myColor, triangleRGB, triangleRGB, triangleRGB, 1.0f);
 
     // draw primitives using the currently active shader,
     // the previously defined vertex attribute configuration
@@ -241,10 +236,6 @@ void app_initGL() {
                         FLOAT_NUM_PER_VERTEX * sizeof(float),
                           0);
     glEnableVertexAttribArray(gLocation_vPosition);
-
-    gLocation_myColor = glGetUniformLocation(gProgram, "myColor");
-    checkGLError("glGetUniformLocation");
-    logD("glGetUniformLocation(myColor)=%d", gLocation_myColor);
 
     // unbind
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
