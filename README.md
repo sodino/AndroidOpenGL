@@ -1,5 +1,28 @@
 # AndroidOpenGL
 
+
+## feature/glsl_in_out
+ 2021.06.18  
+'in' 'out' variable usage :  
+OpenGL will link those variables together and then it it possible to send data from vertex shader to fragment shader after linking a program object.  
+In this demo, define a `purple` color (mix red and blue) in vertex shader as the input parameter of fragment vertex.
+
+
+Learning focus :
+* Shader Language always begin with a version declaration.
+  The default version value is `version 100`.  
+  Adding a `\n` as a line separator is necessary.
+* Declare an output variable `out vec4 colorFromVertex` in vertex shader,
+  and a similar input variable `in vec4 colorFromVertex` in fragment shader with same name and same type.
+* `gl_FragColor` is deprecated.  
+  The modern way of writing to the output buffers from a fragment shader,  
+  is to declare user-defined output variable,  
+  such as `out vec4 fragColor` in demo code.
+
+preview :  
+The color of <span style="color:purple">triangle</span> will become <span style="color:purple">purple</span>.  
+<span style="color:purple"><font size="150">▲</font></span>
+
 ## feature/openGL_helloSquare_IBO
  2021.06.18  
 IBO/EBO usage : drawing a square composed of two triangles.

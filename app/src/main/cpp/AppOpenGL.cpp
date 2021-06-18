@@ -16,7 +16,7 @@ const char* gVertexShader =
         "out vec4 colorFromVertex;"                         // specify a color output to the next shader(fragment shader)
         "void main() {"
         "  gl_Position = vPosition;"
-        "  colorFromVertex = vec4(1.0, 1.0, 0.0, 1.0);"     // mix red and green, the result is yellow.
+        "  colorFromVertex = vec4(1.0, 0.0, 1.0, 1.0);"     // mix red and blue, the result is purple.
         "}";
 
 const char* gFragmentShader =
