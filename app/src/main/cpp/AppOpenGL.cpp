@@ -13,27 +13,34 @@ const char* gVertexShader =
         // For example, `in` `out` features : 0:1: L0001: Storage qualifier not allowed in GLSL ES version 100
         "#version 320 es\n"                                 // NOTE: add \n as a line separator
         "layout(location=0) in vec4 vPosition;"
+        "layout(location=1) in vec3 vColor;"
+        "out vec3 tmpColor;"                                // Just as a value transfer, so naming it with 'tmp'
         "void main() {"
         "  gl_Position = vPosition;"
+        "  tmpColor = vColor;"
         "}\0";                                              // NOTE: Ending with '\0' indicates that this is the end of a C string.
 
 const char* gFragmentShader =
         "#version 320 es\n"                                 // NOTE: add \n as a line separator
         "precision mediump float;"
+        "in vec3 tmpColor;"
         "out vec4 fragColor;"
         "void main() {"
-        "  fragColor = vec4(1.0, 0.0, 1.0, 1.0);"
+        "  fragColor = vec4(tmpColor, 1.0);"
         "}\0";                                              // NOTE: Ending with '\0' indicates that this is the end of a C string.
 // end : GLSL code
 
 // begin : gl vertex
-#define FLOAT_NUM_PER_VERTEX 2  // the number of 'float' to define each vertex
-#define VERTEX_COUNT 6          // 2 triangles have 6 vertices
+#define FLOAT_NUM_PER_POSITION 2  // the number of 'float' to define each position
+#define FLOAT_NUM_PER_COLOR    3  // the number of 'float' to define each color
+#define VERTEX_COUNT           6  // 2 triangles have 6 vertices
 const GLfloat gTriangleVertices[] =
-        {-0.5f, 0.5f,           // top left vertex      index : 0
-         -0.5f, -0.5f,          // bottom left vertex   index : 1
-         0.5f, -0.5f,           // bottom right vertex  index : 2
-         0.5f, 0.5f             // top right vertex     index : 3
+        {
+        // positions        // colors
+        -0.5f,  0.5f,       1.0f, 0.0f, 0.0f,    // top left vertex      index : 0
+        -0.5f, -0.5f,       0.0f, 1.0f, 0.0f,    // bottom left vertex   index : 1
+         0.5f, -0.5f,       0.0f, 0.0f, 1.0f,    // bottom right vertex  index : 2
+         0.5f,  0.5f,       0.0f, 0.0f, 0.0f     // top right vertex     index : 3
         };
 
 unsigned int gIndices[] = {
@@ -45,6 +52,7 @@ unsigned int gIndices[] = {
 // begin : gl variable
 GLuint gProgram;
 GLuint gLocation_vPosition;
+GLuint gLocation_vColor;
 
 unsigned int VAO = 0;           // vertex array object
 unsigned int VBO = 0;           // vertex buffer object
@@ -228,14 +236,29 @@ void app_initGL() {
     checkGLError("IBO glBindBuffer & glBufferData");
 
     gLocation_vPosition = glGetAttribLocation(gProgram, "vPosition");
-    checkGLError("glGetAttribLocation");
+    checkGLError("glGetAttribLocation vPosition");
     logD("glGetAttribLocation(vPosition)=%d", gLocation_vPosition);
     glVertexAttribPointer(gLocation_vPosition,
-                          FLOAT_NUM_PER_VERTEX,
+                          FLOAT_NUM_PER_POSITION,
                           GL_FLOAT, GL_FALSE,
-                        FLOAT_NUM_PER_VERTEX * sizeof(float),
+                          // each row has 5 float numbers to define position(s) and color(s).
+                          (FLOAT_NUM_PER_POSITION + FLOAT_NUM_PER_COLOR) * sizeof(float),
+                          // Beginning with position(s) float data each row, so offset is 0.
                           0);
     glEnableVertexAttribArray(gLocation_vPosition);
+
+    gLocation_vColor = glGetAttribLocation(gProgram, "vColor");
+    checkGLError("glGetAttribLocation vColor");
+    logD("glGetAttribLocation(vColor)=%d", gLocation_vColor);
+    glVertexAttribPointer(gLocation_vColor,
+                          FLOAT_NUM_PER_COLOR,
+                          GL_FLOAT, GL_FALSE,
+                          // each row has 5 float numbers to define position(s) and color(s).
+                          (FLOAT_NUM_PER_POSITION + FLOAT_NUM_PER_COLOR) * sizeof(float),
+                          // read position(s) float data first at each row, then color's data.
+                          // so offset is (positionNum * float.size)
+                          (void*)(FLOAT_NUM_PER_POSITION * sizeof(float)));
+    glEnableVertexAttribArray(gLocation_vColor);
 
     // unbind
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
