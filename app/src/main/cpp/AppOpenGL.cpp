@@ -8,15 +8,24 @@
 
 // begin : GLSL code, constant string
 const char* gVertexShader =
-        "attribute vec4 vPosition;"
+        // Shaders shall always begin with a version declaration. Otherwise it defaults `version 100`.
+        // When some new features are used, corresponding errors will be thrown.
+        // For example, `in` `out` features : 0:1: L0001: Storage qualifier not allowed in GLSL ES version 100
+        "#version 320 es\n"                                 // NOTE: add \n as a line separator
+        "layout(location=0) in vec4 vPosition;"
+        "out vec4 colorFromVertex;"                         // specify a color output to the next shader(fragment shader)
         "void main() {"
         "  gl_Position = vPosition;"
+        "  colorFromVertex = vec4(1.0, 1.0, 0.0, 1.0);"     // mix red and green, the result is yellow.
         "}";
 
 const char* gFragmentShader =
+        "#version 320 es\n"                                 // NOTE: add \n as a line separator
         "precision mediump float;"
+        "in vec4 colorFromVertex;"                          // same name and same type as variable in vertex shader, the difference is just 'in'.
+        "out vec4 fragColor;"
         "void main() {"
-        "  gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);"
+        "  fragColor = colorFromVertex;"
         "}";
 // end : GLSL code
 
