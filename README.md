@@ -1,5 +1,18 @@
 # AndroidOpenGL
 
+## feature/glsl_uniform
+ 2021.06.18  
+`uniform` usage :  
+A way to pass data from our application on the CPU to the shaders on the GPU.
+
+Learning focus :
+* `uniform` variable can be assigned in GLSL code, otherwise an compilation error will be thrown. "S0027: Cannot modify a uniform variable"
+* Use `glGetUniformLocation` to find the index/location of the uniform attribute in our shader when [app_initGL()](app/src/main/cpp/AppOpenGL.h#L12-L12) is executed.
+* When rendering frame, use `glUniform4f` to update the value of uniform variable `myColor`.
+
+
+preview :  
+The color of triangles is constantly changing with the value calculated by the CPU.
 
 ## feature/glsl_in_out
  2021.06.18  
