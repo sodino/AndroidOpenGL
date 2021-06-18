@@ -13,19 +13,17 @@ const char* gVertexShader =
         // For example, `in` `out` features : 0:1: L0001: Storage qualifier not allowed in GLSL ES version 100
         "#version 320 es\n"                                 // NOTE: add \n as a line separator
         "layout(location=0) in vec4 vPosition;"
-        "out vec4 colorFromVertex;"                         // specify a color output to the next shader(fragment shader)
         "void main() {"
         "  gl_Position = vPosition;"
-        "  colorFromVertex = vec4(1.0, 0.0, 1.0, 1.0);"     // mix red and blue, the result is purple.
         "}";
 
 const char* gFragmentShader =
         "#version 320 es\n"                                 // NOTE: add \n as a line separator
         "precision mediump float;"
-        "in vec4 colorFromVertex;"                          // same name and same type as variable in vertex shader, the difference is just 'in'.
         "out vec4 fragColor;"
+        "uniform vec4 myColor;"                             // this variable's value will be set by invoking gl api in c++ code
         "void main() {"
-        "  fragColor = colorFromVertex;"
+        "  fragColor = myColor;"
         "}";
 // end : GLSL code
 
@@ -47,7 +45,8 @@ unsigned int gIndices[] = {
 
 // begin : gl variable
 GLuint gProgram;
-GLuint gPositionLocation;
+GLuint gLocation_vPosition;
+GLuint gLocation_myColor;
 
 unsigned int VAO = 0;           // vertex array object
 unsigned int VBO = 0;           // vertex buffer object
@@ -56,6 +55,7 @@ unsigned int IBO = 0;           // index buffer object
 
 // begin : logic variable
 bool onlyDrawLine = false;
+float rgb = 0.0f;
 // end : logci variable
 
 static void checkGLError(const char* tag) {
@@ -156,7 +156,6 @@ void app_resizeGL(jint width, jint height) {
 }
 
 void app_renderClearColor() {
-    static float rgb = 0.0f;
     static bool isAdd = true;
     rgb += (isAdd) ? 0.01f : -0.01f;
     if (rgb > 1.0f) {
@@ -184,6 +183,9 @@ void app_renderTriangle() {
     glUseProgram(gProgram);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
     glBindVertexArray(VAO);
+
+    float triangleRGB = 1.0f - rgb;  // set to be somewhat different from SurfaceView background.
+    glUniform4f(gLocation_myColor, triangleRGB, triangleRGB, triangleRGB, 1.0f);
 
     // draw primitives using the currently active shader,
     // the previously defined vertex attribute configuration
@@ -230,15 +232,19 @@ void app_initGL() {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(gIndices), gIndices, GL_STATIC_DRAW);
     checkGLError("IBO glBindBuffer & glBufferData");
 
-    gPositionLocation = glGetAttribLocation(gProgram, "vPosition");
+    gLocation_vPosition = glGetAttribLocation(gProgram, "vPosition");
     checkGLError("glGetAttribLocation");
-    logD("glGetAttribLocation(vPosition)=%d", gPositionLocation);
-    glVertexAttribPointer(gPositionLocation,
-                        FLOAT_NUM_PER_VERTEX,
-                        GL_FLOAT, GL_FALSE,
+    logD("glGetAttribLocation(vPosition)=%d", gLocation_vPosition);
+    glVertexAttribPointer(gLocation_vPosition,
+                          FLOAT_NUM_PER_VERTEX,
+                          GL_FLOAT, GL_FALSE,
                         FLOAT_NUM_PER_VERTEX * sizeof(float),
-                        0);
-    glEnableVertexAttribArray(gPositionLocation);
+                          0);
+    glEnableVertexAttribArray(gLocation_vPosition);
+
+    gLocation_myColor = glGetUniformLocation(gProgram, "myColor");
+    checkGLError("glGetUniformLocation");
+    logD("glGetUniformLocation(myColor)=%d", gLocation_myColor);
 
     // unbind
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
