@@ -1,5 +1,20 @@
 # AndroidOpenGL
 
+## feature/openGL_helloSquare_IBO
+ 2021.06.18  
+IBO/EBO usage : drawing a square composed of two triangles.
+
+Learning focus :
+* Specify the unique [4 vertices](app/src/main/cpp/AppOpenGL.cpp#L26-L31) and the [6 indices](app/src/main/cpp/AppOpenGL.cpp#L33-L36) to define two triangle, two of them form a square.
+* Create `Index Buffer Object(IBO) / Element Buffer Object(EBO)`
+* Bind `IBO/EBO` with `glBindBuffer`, copy [6 indices](app/src/main/cpp/AppOpenGL.cpp#L33-L36) into the buffer with `glBufferData`, specify `GL_ELEMENT_ARRAY_BUFFER` as the buffer type.
+* Replace the ~~`glDrawArrays`~~ with `glDrawElements` to indicate we want to render the triangles from an index buffer.
+* Remember to delete `IBO/EBO` by invoking `glDeleteBuffers`
+
+preview :  
+<img src="./preview/hello.square.IBO.png" alt="drawing" width="500"/>
+
+
 ## feature/openGL_helloTriangle
  2021.06.17
 
