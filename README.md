@@ -1,5 +1,22 @@
 # AndroidOpenGL
 
+## feature/openGL_shaderInterpolation
+ 2021.06.18  
+Demonstrate the realization of shader interpolation.
+
+Learning focus :
+* Sending data to the graphics card from the CPU is relatively slow.  
+  This demo, we add color data to the [vertex data](app/src/main/cpp/AppOpenGL.cpp#L37-L44), send them to the vertex shader at once.
+* 2 float data define a position, 3 float data define a color.  
+  Each row of vertex data have 5 float data.  
+  So try to understand the last parameter of `glVertexAttribPointer` better,  
+  that treated as a byte `offset` into the buffer object's data store.
+
+Hint : [Shader code](app/src/main/cpp/AppOpenGL.cpp#L10-L21) end with `\0` to indicate that this is the end of a C string.
+
+preview :  
+<img src="./preview/shader.interpolation.png" alt="drawing" width="500"/>
+
 ## feature/glsl_uniform
  2021.06.18  
 `uniform` usage :  
