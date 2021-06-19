@@ -289,11 +289,11 @@ void app_initGL() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-//    int width, height, nrChannels;
-//    unsigned char *pixelData = stbi_load("/data/user/0/sodino.open.gl/cache/wall.jpg", &width, &height, &nrChannels, 0);
-//    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixelData);
-//    glGenerateMipmap(GL_TEXTURE_2D);
-//    stbi_image_free(pixelData);
+    int width, height, nrChannels;
+    unsigned char *pixelData = stbi_load("/data/user/0/sodino.open.gl/cache/wall.jpg", &width, &height, &nrChannels, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixelData);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    stbi_image_free(pixelData);
 
     // unbind
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
