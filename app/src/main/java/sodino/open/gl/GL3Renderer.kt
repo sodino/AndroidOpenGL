@@ -1,11 +1,14 @@
 package sodino.open.gl
 
+import android.content.res.AssetManager
 import android.opengl.GLSurfaceView
 import android.util.Log
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
-class GL3Renderer : GLSurfaceView.Renderer {
+class GL3Renderer(
+    val assetMgr : AssetManager
+) : GLSurfaceView.Renderer {
     private val jni = JniHandler()
 
     override fun onSurfaceCreated(gl: GL10, config: EGLConfig) {
@@ -23,7 +26,7 @@ class GL3Renderer : GLSurfaceView.Renderer {
 
     override fun onSurfaceChanged(gl: GL10, width: Int, height: Int) {
         Log.d("appGL", "Renderer : onSurfaceChanged w=$width, h=$height")
-        jni.initGL()
+        jni.initGL(assetMgr)
         jni.resizeGL(width, height)
 
     }

@@ -1,6 +1,7 @@
 #include <jni.h>
 #include <string>
 #include "print/printOpenGL.h"
+#include "ndk/AssetKit.h"
 #include "AppOpenGL.h"
 extern "C"
 JNIEXPORT void JNICALL
@@ -22,7 +23,8 @@ Java_sodino_open_gl_JniHandler_renderGL(JNIEnv *env, jobject thiz) {
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_sodino_open_gl_JniHandler_initGL(JNIEnv *env, jobject thiz) {
+Java_sodino_open_gl_JniHandler_initGL(JNIEnv *env, jobject thiz, jobject assetManager) {
+    ndkAsset_initAssetManager(env, assetManager);
     app_initGL();
 }
 
@@ -30,6 +32,7 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_sodino_open_gl_JniHandler_destroyGL(JNIEnv *env, jobject thiz) {
     app_destroyGL();
+    ndkAsset_destroyAssetManager();
 }
 
 

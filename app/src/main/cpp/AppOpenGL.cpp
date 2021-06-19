@@ -4,31 +4,8 @@
 #include "jni.h"
 #include <string>
 #include "AppOpenGL.h"
+#include "ndk/AssetKit.h"
 #include <GLES3/gl3.h>
-
-// begin : GLSL code, constant string
-const char* gVertexShader =
-        // Shaders shall always begin with a version declaration. Otherwise it defaults `version 100`.
-        // When some new features are used, corresponding errors will be thrown.
-        // For example, `in` `out` features : 0:1: L0001: Storage qualifier not allowed in GLSL ES version 100
-        "#version 320 es\n"                                 // NOTE: add \n as a line separator
-        "layout(location=0) in vec4 vPosition;"
-        "layout(location=1) in vec3 vColor;"
-        "out vec3 tmpColor;"                                // Just as a value transfer, so naming it with 'tmp'
-        "void main() {"
-        "  gl_Position = vPosition;"
-        "  tmpColor = vColor;"
-        "}\0";                                              // NOTE: Ending with '\0' indicates that this is the end of a C string.
-
-const char* gFragmentShader =
-        "#version 320 es\n"                                 // NOTE: add \n as a line separator
-        "precision mediump float;"
-        "in vec3 tmpColor;"
-        "out vec4 fragColor;"
-        "void main() {"
-        "  fragColor = vec4(tmpColor, 1.0);"
-        "}\0";                                              // NOTE: Ending with '\0' indicates that this is the end of a C string.
-// end : GLSL code
 
 // begin : gl vertex
 #define FLOAT_NUM_PER_POSITION 2  // the number of 'float' to define each position
@@ -109,13 +86,20 @@ GLuint loadGLShader(GLenum shaderType, const char* shaderCode) {
 }
 
 GLuint createGLProgram(const char* codeVertex, const char* codeFragment) {
-    GLuint shaderVertex = loadGLShader(GL_VERTEX_SHADER, gVertexShader);
+    int codeLength = 0;
+    const char* vsCode = ndkAsset_readText(codeVertex, &codeLength);
+    logD("vertex.vsh \n%s", vsCode);
+    GLuint shaderVertex = loadGLShader(GL_VERTEX_SHADER, vsCode);
+    free((void*)vsCode);
     if (shaderVertex == 0) {
         logD("loadGLShader GL_VERTEX_SHADER failed.");
         return 0;
     }
 
-    GLuint shaderFragment = loadGLShader(GL_FRAGMENT_SHADER, gFragmentShader);
+    const char* fsCode = ndkAsset_readText(codeFragment, &codeLength);
+    logD("fragment.vs \n%s", fsCode);
+    GLuint shaderFragment = loadGLShader(GL_FRAGMENT_SHADER, fsCode);
+    free((void*)fsCode);
     if (shaderFragment == 0) {
         logD("loadGLShader GL_FRAGMENT_SHADER failed.");
         return 0;
@@ -209,7 +193,7 @@ void app_initGL() {
         logD("app_initGL has been completed. Repeat call and return.");
         return;
     }
-    gProgram = createGLProgram(gVertexShader, gFragmentShader);
+    gProgram = createGLProgram("vertex.vsh", "fragment.fsh");
     if (gProgram == 0) {
         logD("createGLProgram failed.");
         return;

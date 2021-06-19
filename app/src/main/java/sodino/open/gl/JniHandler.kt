@@ -1,5 +1,7 @@
 package sodino.open.gl
 
+import android.content.res.AssetManager
+
 class JniHandler {
     companion object {
         init {
@@ -13,7 +15,7 @@ class JniHandler {
      * which is packaged with this application.
      */
     external fun printOpenGLInfos()
-    external fun initGL()
+    external fun initGL(assetMgr : AssetManager)
     external fun resizeGL(width: Int, height: Int)
     external fun renderGL()
     external fun destroyGL()

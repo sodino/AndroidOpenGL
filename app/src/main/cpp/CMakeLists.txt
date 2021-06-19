@@ -25,6 +25,7 @@ add_library(
         print/printOpenGL.cpp
         AppJNI.cpp
         AppOpenGL.cpp
+        ndk/AssetKit.cpp
 )
 
 # Searches for a specified prebuilt library and stores the path as a

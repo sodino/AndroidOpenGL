@@ -16,7 +16,7 @@ class GL3SurfaceView : GLSurfaceView {
         // Pick an EGLConfig with RGB8 color, 16-bit depth, no stencil,
         // supporting OpenGL ES 2.0 or later backwards-compatible versions.
         setEGLConfigChooser(8, 8, 8, 0, 16, 0)
-        renderer = GL3Renderer()
+        renderer = GL3Renderer(context.assets)
         setRenderer(renderer)
     }
 
