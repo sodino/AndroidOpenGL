@@ -5,6 +5,7 @@
 #include <string>
 #include "AppOpenGL.h"
 #include <GLES3/gl3.h>
+#include <ctime>
 
 // begin : GLSL code, constant string
 const char* gVertexShader =
@@ -14,33 +15,39 @@ const char* gVertexShader =
         "#version 320 es\n"                                 // NOTE: add \n as a line separator
         "layout(location=0) in vec4 vPosition;"
         "layout(location=1) in vec3 vColor;"
+        "layout(location=2) in vec2 vTexCoordinate;"
         "out vec3 tmpColor;"                                // Just as a value transfer, so naming it with 'tmp'
+        "out vec2 tmpTexCoordinate;"
         "void main() {"
         "  gl_Position = vPosition;"
         "  tmpColor = vColor;"
+        "  tmpTexCoordinate = vec2(vTexCoordinate.x, vTexCoordinate.y);"
         "}\0";                                              // NOTE: Ending with '\0' indicates that this is the end of a C string.
 
 const char* gFragmentShader =
         "#version 320 es\n"                                 // NOTE: add \n as a line separator
         "precision mediump float;"
         "in vec3 tmpColor;"
+        "in vec2 tmpTexCoordinate;"
         "out vec4 fragColor;"
+        "uniform sampler2D texture1;"
         "void main() {"
-        "  fragColor = vec4(tmpColor, 1.0);"
+        "  fragColor = texture(texture1, tmpTexCoordinate);"
         "}\0";                                              // NOTE: Ending with '\0' indicates that this is the end of a C string.
 // end : GLSL code
 
 // begin : gl vertex
 #define FLOAT_NUM_PER_POSITION 2  // the number of 'float' to define each position
 #define FLOAT_NUM_PER_COLOR    3  // the number of 'float' to define each color
+#define FLOAT_NUM_PER_TEXTURE  2  // the number of 'float' to define each texture
 #define VERTEX_COUNT           6  // 2 triangles have 6 vertices
 const GLfloat gTriangleVertices[] =
         {
-        // positions        // colors
-        -0.5f,  0.5f,       1.0f, 0.0f, 0.0f,    // top left vertex      index : 0
-        -0.5f, -0.5f,       0.0f, 1.0f, 0.0f,    // bottom left vertex   index : 1
-         0.5f, -0.5f,       0.0f, 0.0f, 1.0f,    // bottom right vertex  index : 2
-         0.5f,  0.5f,       0.0f, 0.0f, 0.0f     // top right vertex     index : 3
+        // positions        // colors               // textures
+        -0.5f,  0.5f,       1.0f, 0.0f, 0.0f,       1.0f, 1.0f,            // top left vertex      index : 0
+        -0.5f, -0.5f,       0.0f, 1.0f, 0.0f,       1.0f, 0.0f,            // bottom left vertex   index : 1
+         0.5f, -0.5f,       0.0f, 0.0f, 1.0f,       0.0f, 0.0f,            // bottom right vertex  index : 2
+         0.5f,  0.5f,       0.0f, 0.0f, 0.0f,       0.0f, 1.0f             // top right vertex     index : 3
         };
 
 unsigned int gIndices[] = {
@@ -53,15 +60,31 @@ unsigned int gIndices[] = {
 GLuint gProgram;
 GLuint gLocation_vPosition;
 GLuint gLocation_vColor;
+GLuint gLocation_vTexCoordinate;
 
 unsigned int VAO = 0;           // vertex array object
 unsigned int VBO = 0;           // vertex buffer object
 unsigned int IBO = 0;           // index buffer object
+unsigned int texture = 0;
 // end : gl variable
 
 // begin : logic variable
 bool onlyDrawLine = false;
 // end : logic variable
+
+
+#define TEST_SIZE 128
+static unsigned char* testGenPixelData() {
+    static unsigned char pixel_data[TEST_SIZE * TEST_SIZE * 3];
+    unsigned char *p;
+    int x, y;
+    for (y = 0, p = pixel_data; y < TEST_SIZE; y++) {
+        for (x = 0; x < TEST_SIZE; x++, p += 3) {
+            p[0] = p[1] = p[2] = 128 + ((x > 2 && y > 2) ? (rand() % TEST_SIZE) : 0);
+        }
+    }
+    return pixel_data;
+}
 
 static void checkGLError(const char* tag) {
     for (GLint error = glGetError(); error; error = glGetError()) {
@@ -242,7 +265,7 @@ void app_initGL() {
                           FLOAT_NUM_PER_POSITION,
                           GL_FLOAT, GL_FALSE,
                           // each row has 5 float numbers to define position(s) and color(s).
-                          (FLOAT_NUM_PER_POSITION + FLOAT_NUM_PER_COLOR) * sizeof(float),
+                          (FLOAT_NUM_PER_POSITION + FLOAT_NUM_PER_COLOR + FLOAT_NUM_PER_TEXTURE) * sizeof(float),
                           // Beginning with position(s) float data each row, so offset is 0.
                           0);
     glEnableVertexAttribArray(gLocation_vPosition);
@@ -254,11 +277,39 @@ void app_initGL() {
                           FLOAT_NUM_PER_COLOR,
                           GL_FLOAT, GL_FALSE,
                           // each row has 5 float numbers to define position(s) and color(s).
-                          (FLOAT_NUM_PER_POSITION + FLOAT_NUM_PER_COLOR) * sizeof(float),
+                          (FLOAT_NUM_PER_POSITION + FLOAT_NUM_PER_COLOR + FLOAT_NUM_PER_TEXTURE) * sizeof(float),
                           // read position(s) float data first at each row, then color's data.
                           // so offset is (positionNum * float.size)
                           (void*)(FLOAT_NUM_PER_POSITION * sizeof(float)));
     glEnableVertexAttribArray(gLocation_vColor);
+
+    gLocation_vTexCoordinate = glGetAttribLocation(gProgram, "vTexCoordinate");
+    checkGLError("glGetAttribLocation vTexCoordinate");
+    logD("glGetAttribLocation(vTexCoordinate)=%d", gLocation_vTexCoordinate);
+    glVertexAttribPointer(gLocation_vTexCoordinate,
+                          FLOAT_NUM_PER_TEXTURE,
+                          GL_FLOAT, GL_FALSE,
+                          (FLOAT_NUM_PER_POSITION + FLOAT_NUM_PER_COLOR + FLOAT_NUM_PER_TEXTURE) * sizeof(float),
+                          (void*)((FLOAT_NUM_PER_POSITION + FLOAT_NUM_PER_COLOR) * sizeof(float)));
+    glEnableVertexAttribArray(gLocation_vTexCoordinate);
+
+
+
+    // load and create texture
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    int width = TEST_SIZE, height = TEST_SIZE;
+    unsigned char* pixelData = testGenPixelData();
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixelData);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+
 
     // unbind
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
