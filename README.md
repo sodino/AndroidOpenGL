@@ -1,5 +1,25 @@
 # AndroidOpenGL
 
+
+
+## feature/ndk_AAssetManager
+ 2021.06.18
+Move the shader codes out from CPP code, then store it separately in the assets folder.  
+Code **decoupling** optimization.  
+Keep code more **organized**.
+
+Shader code store in `assets` directory :
+* vertex.vsh
+* fragment.fsh
+
+Usage of `AAsset_Manager`:
+* Invoke `AAssetManager_fromJava(JNIEnv*, jobject assetManager)` to get `AAssetManager`,  
+  and store it in the global variable `gAAssetMgr` for subsequent logic calls.
+* Get `AAsset*` pointer object by calling method `AAssetManager_open` with three parameters : `AAssetManager` `assetItemName` `mode`
+* Invoke `AAsset_getLength` with parameter `AAsset*` to get the data length, preparation for the next step of `new` operation.
+* Read target data by invoking `AAsset_read`
+* Finally, `AAsset_close` with parameter `AAseset*`.
+
 ## feature/openGL_shaderInterpolation
  2021.06.18  
 Demonstrate the realization of shader interpolation.
