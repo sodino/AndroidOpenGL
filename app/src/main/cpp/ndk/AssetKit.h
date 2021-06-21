@@ -8,7 +8,8 @@
 #include "android/asset_manager_jni.h"
 
 void ndkAsset_initAssetManager(JNIEnv *env, jobject assetManager);
-const char* ndkAsset_readText(const char* assetItemName, int* itemLength, int mode = AASSET_MODE_BUFFER);
+const          char* ndkAsset_readText(const char* assetItemName, int* itemLength, int mode = AASSET_MODE_BUFFER);
+const unsigned char* ndkAsset_readBytes(const char* assetItemName, int* itemLength, int mode = AASSET_MODE_BUFFER);
 void ndkAsset_destroyAssetManager();
 
 #endif //ANDROIDOPENGL_ASSETKIT_H

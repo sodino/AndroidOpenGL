@@ -1,9 +1,37 @@
 # AndroidOpenGL
 
+## feature/openGL_helloTexture
+ 2021.06.19
 
+Load image from android asset folder, and apply it as texture.
+
+[Vertices data array](app/src/main/cpp/AppOpenGL.cpp#L18-L25) :
+* Add an extra `texture coordinate` vertex attribute at the end of each row.
+* Notify OpenGL of the new vertex format by invoking `glVertexAttribPointer` three times.  
+  2 float data to specify vertex position  
+  3 float data to specify color  
+  2 float data to specify texture coordinate
+
+Texture coordinate :  
+By default, the texture is flipped upside-down.  
+OpenGL expects the 0.0 `texture coordinate` on the `y-axis` to be on the bottom side of the image,  
+but images usually have 0.0 at the top of the `y-axis`.  
+So calling `stbi_set_flip_vertically_on_load(true)` before loading any image to flip the `y-axis`.
+
+Image Loading :
+* Load image file data from `assets` folder by [ndkAsset_readBytes](app/src/main/cpp/ndk/AssetKit.h#L12-L12)
+* Parse image file data to image pixel data by [stbi_load_from_memory](app/src/main/cpp/img/stb_image.h#L392-L392)
+* The `width` `height` `channel` can be obtained after parsing image file.
+* The `format` parameter of `glTexImage2D` is determined by `channel` value.
+  If `channel` is equals to `4`, pass `GL_RGBA` to `format`; if `channel` is equals to `3`, pass `GL_RGB` to `format`.
+* IMPORTANT : [`free` image file data](app/src/main/cpp/img/stb_image.h#L281-L281) and [`free` image pixel data](app/src/main/cpp/img/stb_image.h#L284-L284)
+
+
+preview :  
+![hello.texture](./preview/hello.texture.png)
 
 ## feature/ndk_AAssetManager
- 2021.06.18  
+ 2021.06.19  
 Move the shader codes out from CPP code, then store it separately in the assets folder.  
 Code **decoupling** optimization.  
 Keep code more **organized**.
