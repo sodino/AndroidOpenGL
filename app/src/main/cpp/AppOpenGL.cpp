@@ -18,10 +18,10 @@
 const GLfloat gTriangleVertices[] =
         {
                 // positions        // colors               // textures
-                -0.5f,  0.5f,       1.0f, 0.0f, 0.0f,       1.0f, 1.0f,            // top left vertex      index : 0
-                -0.5f, -0.5f,       0.0f, 1.0f, 0.0f,       1.0f, 0.0f,            // bottom left vertex   index : 1
-                 0.5f, -0.5f,       0.0f, 0.0f, 1.0f,       0.0f, 0.0f,            // bottom right vertex  index : 2
-                 0.5f,  0.5f,       0.0f, 0.0f, 0.0f,       0.0f, 1.0f             // top right vertex     index : 3
+                -0.5f,  0.5f,       1.0f, 0.0f, 0.0f,       0.0f, 1.0f,            // top left vertex      index : 0
+                -0.5f, -0.5f,       0.0f, 1.0f, 0.0f,       0.0f, 0.0f,            // bottom left vertex   index : 1
+                 0.5f, -0.5f,       0.0f, 0.0f, 1.0f,       1.0f, 0.0f,            // bottom right vertex  index : 2
+                 0.5f,  0.5f,       0.0f, 0.0f, 0.0f,       1.0f, 1.0f             // top right vertex     index : 3
         };
 
 unsigned int gIndices[] = {
