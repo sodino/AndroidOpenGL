@@ -17,6 +17,9 @@ By default, the texture is flipped upside-down.
 OpenGL expects the 0.0 `texture coordinate` on the `y-axis` to be on the bottom side of the image,  
 but images usually have 0.0 at the top of the `y-axis`.  
 So calling `stbi_set_flip_vertically_on_load(true)` before loading any image to flip the `y-axis`.
+````
+For the later `develop` branch, `stbi_set_flip_vertically_on_load(true)` will be comment out by swaping the `y-axis` of texture coordinate.
+````
 
 Image Loading :
 * Load image file data from `assets` folder by [ndkAsset_readBytes](app/src/main/cpp/ndk/AssetKit.h#L12-L12)
