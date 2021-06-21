@@ -306,7 +306,7 @@ void app_initGL() {
     // load and create texture
     int defTextureUnit = 0; // Location of a texture is known as a TEXTURE UNIT
     loadAndCreateTexture("dog.png", &texture0, "texture0", defTextureUnit + 0);
-    loadAndCreateTexture("flamingo.jpg", &texture1, "texture1", defTextureUnit + 1);
+//    loadAndCreateTexture("flamingo.jpg", &texture1, "texture1", defTextureUnit + 1);
 
     // unbind
     glBindTexture(GL_TEXTURE_2D, 0);
