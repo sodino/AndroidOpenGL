@@ -19,7 +19,7 @@ void ndkAsset_destroyAssetManager() {
 }
 
 
-const char *ndkAsset_readText(
+ const char* ndkAsset_readText(
         const char *assetItemName,
         int *itemLength,
         int mode) {
@@ -27,12 +27,34 @@ const char *ndkAsset_readText(
         return NULL;
     }
     AAsset* asset = AAssetManager_open(gAAssetMgr, assetItemName, mode);
-    (*itemLength) = AAsset_getLength(asset);
+    int assetLength = AAsset_getLength(asset);
     char* buffer = NULL;
-    if (*itemLength > 0) {
-        buffer = (char*) malloc(*itemLength +1);
+    if (assetLength > 0) {
+        *itemLength = assetLength + 1;
+        buffer = (char*) malloc(assetLength);
         AAsset_read(asset, buffer, *itemLength);
-        buffer[*itemLength] = '\0';
+        buffer[assetLength] = '\0';
+    }
+    AAsset_close(asset);
+
+    return buffer;
+}
+
+
+const unsigned char* ndkAsset_readBytes(
+        const char *assetItemName,
+        int *itemLength,
+        int mode) {
+    if (gAAssetMgr == NULL) {
+        return NULL;
+    }
+    AAsset* asset = AAssetManager_open(gAAssetMgr, assetItemName, mode);
+    int assetLength = AAsset_getLength(asset);
+    unsigned char* buffer = NULL;
+    if (assetLength > 0) {
+        *itemLength = assetLength;
+        buffer = (unsigned char*) malloc(assetLength);
+        AAsset_read(asset, buffer, *itemLength);
     }
     AAsset_close(asset);
 

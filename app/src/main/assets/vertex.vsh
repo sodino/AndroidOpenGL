@@ -5,11 +5,14 @@
 
 layout(location=0) in vec4 vPosition;
 layout(location=1) in vec3 vColor;
+layout(location=3) in vec2 vTexCoordinate;
 
 // Just as a value transfer, so naming it with 'tmp'
 out vec3 tmpColor;
+out vec2 tmpTexCoordinate;
 
 void main() {
   gl_Position = vPosition;
   tmpColor = vColor;
+  tmpTexCoordinate = vec2(vTexCoordinate.x, vTexCoordinate.y);
 }
