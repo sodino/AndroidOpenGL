@@ -13,14 +13,15 @@
 // begin : gl vertex
 #define FLOAT_NUM_PER_POSITION 2  // the number of 'float' to define each position
 #define FLOAT_NUM_PER_COLOR    3  // the number of 'float' to define each color
+#define FLOAT_NUM_PER_TEXTURE  2  // the number of 'float' to define each texture
 #define VERTEX_COUNT           6  // 2 triangles have 6 vertices
 const GLfloat gTriangleVertices[] =
         {
-        // positions        // colors
-        -0.5f,  0.5f,       1.0f, 0.0f, 0.0f,    // top left vertex      index : 0
-        -0.5f, -0.5f,       0.0f, 1.0f, 0.0f,    // bottom left vertex   index : 1
-         0.5f, -0.5f,       0.0f, 0.0f, 1.0f,    // bottom right vertex  index : 2
-         0.5f,  0.5f,       0.0f, 0.0f, 0.0f     // top right vertex     index : 3
+                // positions        // colors               // textures
+                -0.5f,  0.5f,       1.0f, 0.0f, 0.0f,       1.0f, 1.0f,            // top left vertex      index : 0
+                -0.5f, -0.5f,       0.0f, 1.0f, 0.0f,       1.0f, 0.0f,            // bottom left vertex   index : 1
+                 0.5f, -0.5f,       0.0f, 0.0f, 1.0f,       0.0f, 0.0f,            // bottom right vertex  index : 2
+                 0.5f,  0.5f,       0.0f, 0.0f, 0.0f,       0.0f, 1.0f             // top right vertex     index : 3
         };
 
 unsigned int gIndices[] = {
@@ -33,10 +34,12 @@ unsigned int gIndices[] = {
 GLuint gProgram;
 GLuint gLocation_vPosition;
 GLuint gLocation_vColor;
+GLuint gLocation_vTexCoordinate;
 
 unsigned int VAO = 0;           // vertex array object
 unsigned int VBO = 0;           // vertex buffer object
 unsigned int IBO = 0;           // index buffer object
+unsigned int texture = 0;       //
 // end : gl variable
 
 // begin : logic variable
@@ -100,7 +103,7 @@ GLuint createGLProgram(const char* codeVertex, const char* codeFragment) {
     }
 
     const char* fsCode = ndkAsset_readText(codeFragment, &codeLength);
-    logD("fragment.vs \n%s", fsCode);
+    logD("fragment.vsh \n%s", fsCode);
     GLuint shaderFragment = loadGLShader(GL_FRAGMENT_SHADER, fsCode);
     free((void*)fsCode);
     if (shaderFragment == 0) {
@@ -176,6 +179,7 @@ void app_renderTriangle() {
     glUseProgram(gProgram);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
     glBindVertexArray(VAO);
+    glBindTexture(GL_TEXTURE_2D, texture);
 
     // draw primitives using the currently active shader,
     // the previously defined vertex attribute configuration
@@ -229,7 +233,7 @@ void app_initGL() {
                           FLOAT_NUM_PER_POSITION,
                           GL_FLOAT, GL_FALSE,
                           // each row has 5 float numbers to define position(s) and color(s).
-                          (FLOAT_NUM_PER_POSITION + FLOAT_NUM_PER_COLOR) * sizeof(float),
+                          (FLOAT_NUM_PER_POSITION + FLOAT_NUM_PER_COLOR + FLOAT_NUM_PER_TEXTURE) * sizeof(float),
                           // Beginning with position(s) float data each row, so offset is 0.
                           0);
     glEnableVertexAttribArray(gLocation_vPosition);
@@ -241,13 +245,49 @@ void app_initGL() {
                           FLOAT_NUM_PER_COLOR,
                           GL_FLOAT, GL_FALSE,
                           // each row has 5 float numbers to define position(s) and color(s).
-                          (FLOAT_NUM_PER_POSITION + FLOAT_NUM_PER_COLOR) * sizeof(float),
+                          (FLOAT_NUM_PER_POSITION + FLOAT_NUM_PER_COLOR + FLOAT_NUM_PER_TEXTURE) * sizeof(float),
                           // read position(s) float data first at each row, then color's data.
                           // so offset is (positionNum * float.size)
                           (void*)(FLOAT_NUM_PER_POSITION * sizeof(float)));
     glEnableVertexAttribArray(gLocation_vColor);
 
+    gLocation_vTexCoordinate = glGetAttribLocation(gProgram, "vTexCoordinate");
+    checkGLError("glGetAttribLocation vTexCoordinate");
+    logD("glGetAttribLocation(vTexCoordinate)=%d", gLocation_vTexCoordinate);
+    glVertexAttribPointer(gLocation_vTexCoordinate,
+                          FLOAT_NUM_PER_TEXTURE,
+                          GL_FLOAT, GL_FALSE,
+                          (FLOAT_NUM_PER_POSITION + FLOAT_NUM_PER_COLOR + FLOAT_NUM_PER_TEXTURE) * sizeof(float),
+                          (void*)((FLOAT_NUM_PER_POSITION + FLOAT_NUM_PER_COLOR) * sizeof(float)));
+    glEnableVertexAttribArray(gLocation_vTexCoordinate);
+
+    // load and create texture
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
+    int width, height, imgChannels;
+    int itemLength = -1;
+    const unsigned char* assetData = ndkAsset_readBytes("dog.png", &itemLength);
+//    const unsigned char* assetData = ndkAsset_readBytes("flamingo.jpg", &itemLength);
+    stbi_set_flip_vertically_on_load(true);
+    const unsigned char* pixelData = stbi_load_from_memory(assetData, itemLength, &width, &height, &imgChannels, STBI_default);
+    logD("load bitmap from memory : width=%d, height=%d channels=%d", width, height, imgChannels);
+    free((void*)pixelData);
+    GLint format = (imgChannels == 4) ? GL_RGBA : GL_RGB;
+    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, pixelData);
+    free((void*)assetData);
+
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+
     // unbind
+    glBindTexture(GL_TEXTURE_2D, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
