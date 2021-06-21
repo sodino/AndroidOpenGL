@@ -7,6 +7,9 @@
 #include "ndk/AssetKit.h"
 #include <GLES3/gl3.h>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "img/stb_image.h"
+
 // begin : gl vertex
 #define FLOAT_NUM_PER_POSITION 2  // the number of 'float' to define each position
 #define FLOAT_NUM_PER_COLOR    3  // the number of 'float' to define each color
