@@ -36,10 +36,11 @@ GLuint gLocation_vPosition;
 GLuint gLocation_vColor;
 GLuint gLocation_vTexCoordinate;
 
-unsigned int VAO = 0;           // vertex array object
-unsigned int VBO = 0;           // vertex buffer object
-unsigned int IBO = 0;           // index buffer object
-unsigned int texture = 0;       //
+unsigned int VAO            = 0;           // vertex array object
+unsigned int VBO            = 0;           // vertex buffer object
+unsigned int IBO            = 0;           // index buffer object
+unsigned int texture0       = 0;           // texture `dog`
+unsigned int texture1       = 0;           // texture `flamingo`
 // end : gl variable
 
 // begin : logic variable
@@ -50,6 +51,43 @@ static void checkGLError(const char* tag) {
     for (GLint error = glGetError(); error; error = glGetError()) {
         logD("%s : glError=0x%x", tag, error);
     }
+}
+
+void loadAndCreateTexture(const char* assetImagePath,
+                          GLuint* textureID,
+                          const char* shaderTextureVariableName,
+                          const int textureUnit) {
+    glGenTextures(1, textureID);
+    logD("glGenTextures(%s)=%d", shaderTextureVariableName, *textureID);
+    glBindTexture(GL_TEXTURE_2D, *textureID);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    // GL_NEAREST results in blocked patterns where we can clearly see the pixels that form the texture.
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    // GL_LINEAR produces a smoother pattern where the individual pixels are less visible.
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
+    int width, height, imgChannels;
+    int itemLength = -1;
+    const unsigned char* assetData = ndkAsset_readBytes(assetImagePath, &itemLength);
+//    const unsigned char* assetData = ndkAsset_readBytes("flamingo.jpg", &itemLength);
+//    stbi_set_flip_vertically_on_load(true);
+    const unsigned char* pixelData = stbi_load_from_memory(assetData, itemLength, &width, &height, &imgChannels, STBI_default);
+    logD("load bitmap from memory : width=%d, height=%d channels=%d", width, height, imgChannels);
+    free((void*)pixelData);
+    GLint format = (imgChannels == 4) ? GL_RGBA : GL_RGB;
+    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, pixelData);
+    free((void*)assetData);
+
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glUseProgram(gProgram); // Active the shader before setting uniforms!!
+    GLuint texLocation = glGetUniformLocation(gProgram, shaderTextureVariableName);
+    logD("glGetUniformLocation(%s)=%d", shaderTextureVariableName, texLocation);
+
+    glUniform1i(texLocation, textureUnit);
 }
 
 GLuint loadGLShader(GLenum shaderType, const char* shaderCode) {
@@ -179,7 +217,11 @@ void app_renderTriangle() {
     glUseProgram(gProgram);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
     glBindVertexArray(VAO);
-    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture0);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, texture1);
 
     // draw primitives using the currently active shader,
     // the previously defined vertex attribute configuration
@@ -262,30 +304,9 @@ void app_initGL() {
     glEnableVertexAttribArray(gLocation_vTexCoordinate);
 
     // load and create texture
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    // GL_NEAREST results in blocked patterns where we can clearly see the pixels that form the texture.
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    // GL_LINEAR produces a smoother pattern where the individual pixels are less visible.
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-
-    int width, height, imgChannels;
-    int itemLength = -1;
-    const unsigned char* assetData = ndkAsset_readBytes("dog.png", &itemLength);
-//    const unsigned char* assetData = ndkAsset_readBytes("flamingo.jpg", &itemLength);
-//    stbi_set_flip_vertically_on_load(true);
-    const unsigned char* pixelData = stbi_load_from_memory(assetData, itemLength, &width, &height, &imgChannels, STBI_default);
-    logD("load bitmap from memory : width=%d, height=%d channels=%d", width, height, imgChannels);
-    free((void*)pixelData);
-    GLint format = (imgChannels == 4) ? GL_RGBA : GL_RGB;
-    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, pixelData);
-    free((void*)assetData);
-
-    glGenerateMipmap(GL_TEXTURE_2D);
+    int defTextureUnit = 0; // Location of a texture is known as a TEXTURE UNIT
+    loadAndCreateTexture("dog.png", &texture0, "texture0", defTextureUnit + 0);
+    loadAndCreateTexture("flamingo.jpg", &texture1, "texture1", defTextureUnit + 1);
 
     // unbind
     glBindTexture(GL_TEXTURE_2D, 0);
