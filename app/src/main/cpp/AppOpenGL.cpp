@@ -61,8 +61,10 @@ void loadAndCreateTexture(const char* assetImagePath,
     glGenTextures(1, textureID);
     logD("glGenTextures(%s)=%d", shaderTextureVariableName, *textureID);
     glBindTexture(GL_TEXTURE_2D, *textureID);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // Clamps the coordinates between 0 and 1. The result is that higher coordinates become clamped to the edge, resulting in a stretched edge pattern.
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    // same as GL_REPEAT but mirrors the image with each repeat.
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 
     // GL_NEAREST results in blocked patterns where we can clearly see the pixels that form the texture.
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
