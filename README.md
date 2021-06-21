@@ -1,5 +1,26 @@
 # AndroidOpenGL
 
+## feature/openGL_mixTexture
+ 2021.06.21
+
+Mixture effect of two images superimposed.
+
+It's IMPORTANT to distinguish the difference between `texture unit` and `attribute/uniform location`.
+* Attribute/Uniform location  
+  The location of an attribute/uniform variable within `a program object`.
+* Texture unit  
+  The binding point between the texture object and the sampler uniform is the texture unit.  
+  Another confusing statement is :  
+  `This location of a texture is more commonly known as a texture unit.`
+
+Code optimization:  
+Implement [`loadAndCreateTexture`](app/src/main/cpp/AppOpenGL.cpp#L56-L59) to improve code encapsulation.
+
+NOTE : Invoking `glUseProgram` to activate the shader before setting uniform!
+
+preview :  
+![mixture.texture](./preview/mixTexture.png)
+
 ## feature/openGL_helloTexture
  2021.06.19
 
