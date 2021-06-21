@@ -3,7 +3,7 @@
 
 
 ## feature/ndk_AAssetManager
- 2021.06.18
+ 2021.06.18  
 Move the shader codes out from CPP code, then store it separately in the assets folder.  
 Code **decoupling** optimization.  
 Keep code more **organized**.
