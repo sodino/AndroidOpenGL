@@ -15,13 +15,14 @@
 #define FLOAT_NUM_PER_COLOR    3  // the number of 'float' to define each color
 #define FLOAT_NUM_PER_TEXTURE  2  // the number of 'float' to define each texture
 #define VERTEX_COUNT           6  // 2 triangles have 6 vertices
+#define SCALE_OFFSET        1.0f  // After exceeding the boundary values of 0 and 1, the area displayed by the texture will become smaller!!
 const GLfloat gTriangleVertices[] =
         {
                 // positions        // colors               // textures
-                -0.5f,  0.5f,       1.0f, 0.0f, 0.0f,       0.0f, 0.0f,            // top left vertex      index : 0
-                -0.5f, -0.5f,       0.0f, 1.0f, 0.0f,       0.0f, 1.0f,            // bottom left vertex   index : 1
-                 0.5f, -0.5f,       0.0f, 0.0f, 1.0f,       1.0f, 1.0f,            // bottom right vertex  index : 2
-                 0.5f,  0.5f,       0.0f, 0.0f, 0.0f,       1.0f, 0.0f             // top right vertex     index : 3
+                -0.5f,  0.5f,       1.0f, 0.0f, 0.0f,       0.0f - SCALE_OFFSET, 0.0f - SCALE_OFFSET,            // top left vertex      index : 0
+                -0.5f, -0.5f,       0.0f, 1.0f, 0.0f,       0.0f - SCALE_OFFSET, 1.0f + SCALE_OFFSET,            // bottom left vertex   index : 1
+                 0.5f, -0.5f,       0.0f, 0.0f, 1.0f,       1.0f + SCALE_OFFSET, 1.0f + SCALE_OFFSET,            // bottom right vertex  index : 2
+                 0.5f,  0.5f,       0.0f, 0.0f, 0.0f,       1.0f + SCALE_OFFSET, 0.0f - SCALE_OFFSET             // top right vertex     index : 3
         };
 
 unsigned int gIndices[] = {
