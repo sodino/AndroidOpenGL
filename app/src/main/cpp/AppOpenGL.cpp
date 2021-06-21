@@ -18,10 +18,10 @@
 const GLfloat gTriangleVertices[] =
         {
                 // positions        // colors               // textures
-                -0.5f,  0.5f,       1.0f, 0.0f, 0.0f,       0.0f, 1.0f,            // top left vertex      index : 0
-                -0.5f, -0.5f,       0.0f, 1.0f, 0.0f,       0.0f, 0.0f,            // bottom left vertex   index : 1
-                 0.5f, -0.5f,       0.0f, 0.0f, 1.0f,       1.0f, 0.0f,            // bottom right vertex  index : 2
-                 0.5f,  0.5f,       0.0f, 0.0f, 0.0f,       1.0f, 1.0f             // top right vertex     index : 3
+                -0.5f,  0.5f,       1.0f, 0.0f, 0.0f,       0.0f, 0.0f,            // top left vertex      index : 0
+                -0.5f, -0.5f,       0.0f, 1.0f, 0.0f,       0.0f, 1.0f,            // bottom left vertex   index : 1
+                 0.5f, -0.5f,       0.0f, 0.0f, 1.0f,       1.0f, 1.0f,            // bottom right vertex  index : 2
+                 0.5f,  0.5f,       0.0f, 0.0f, 0.0f,       1.0f, 0.0f             // top right vertex     index : 3
         };
 
 unsigned int gIndices[] = {
@@ -267,7 +267,9 @@ void app_initGL() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    // GL_NEAREST results in blocked patterns where we can clearly see the pixels that form the texture.
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    // GL_LINEAR produces a smoother pattern where the individual pixels are less visible.
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 
@@ -275,7 +277,7 @@ void app_initGL() {
     int itemLength = -1;
     const unsigned char* assetData = ndkAsset_readBytes("dog.png", &itemLength);
 //    const unsigned char* assetData = ndkAsset_readBytes("flamingo.jpg", &itemLength);
-    stbi_set_flip_vertically_on_load(true);
+//    stbi_set_flip_vertically_on_load(true);
     const unsigned char* pixelData = stbi_load_from_memory(assetData, itemLength, &width, &height, &imgChannels, STBI_default);
     logD("load bitmap from memory : width=%d, height=%d channels=%d", width, height, imgChannels);
     free((void*)pixelData);
@@ -284,7 +286,6 @@ void app_initGL() {
     free((void*)assetData);
 
     glGenerateMipmap(GL_TEXTURE_2D);
-
 
     // unbind
     glBindTexture(GL_TEXTURE_2D, 0);
