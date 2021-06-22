@@ -1,5 +1,36 @@
 # AndroidOpenGL
 
+## feature/openGL_matrix
+ 2021.06.21
+
+Import [glm](https://glm.g-truc.net/0.9.8/index.html) to Android Studio :  
+**First**, download OpenGL Mathematics library [here](https://glm.g-truc.net/0.9.9/index.html)  
+**Second**, extract and copy folder "../glm/glm" to your project location at "../app/src/main/cpp"  
+**Third**, on CMakeList.txt, add the following:
+````
+add_subdirectory(glm)
+````
+**Fourth**, include glm headers to c/c++ file
+
+
+The beginning of all matrix operations is derived from an identity matrix:
+```
+// Make sure to initialize matrix to identity matrix first :
+glm::mat4 transform = glm::mat4(1.0f);
+```
+
+Rotations in 3D are specified with an angle and a `rotation axis`.
+This demo, the textured rectangle is on the XY plane so we want to rotate around the `Z-axis`.
+````
+transform = glm::rotate(transform, 
+                angle, 
+                glm::vec3(0.0f, 0.0f, 1.0f)  // we rotate the images 90 degrees around the `Z-axis`.
+            );
+````
+
+preivew :  
+![matrix.transformation](./preview/matrix.sample.gif)
+
 ## feature/openGL_mixTexture
  2021.06.21
 
