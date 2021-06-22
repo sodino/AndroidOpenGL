@@ -23,9 +23,14 @@ Java_sodino_open_gl_JniHandler_renderGL(JNIEnv *env, jobject thiz) {
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_sodino_open_gl_JniHandler_initGL(JNIEnv *env, jobject thiz, jobject assetManager) {
+Java_sodino_open_gl_JniHandler_initGL(
+        JNIEnv *env,
+        jobject thiz,
+        jobject assetManager,
+
+        jint width, jint height) {
     ndkAsset_initAssetManager(env, assetManager);
-    app_initGL();
+    app_initGL(width, height);
 }
 
 extern "C"

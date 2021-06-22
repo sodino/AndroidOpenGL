@@ -15,7 +15,7 @@ class JniHandler {
      * which is packaged with this application.
      */
     external fun printOpenGLInfos()
-    external fun initGL(assetMgr : AssetManager)
+    external fun initGL(assetMgr : AssetManager, width: Int, height: Int)
     external fun resizeGL(width: Int, height: Int)
     external fun renderGL()
     external fun destroyGL()

@@ -26,9 +26,7 @@ class GL3Renderer(
 
     override fun onSurfaceChanged(gl: GL10, width: Int, height: Int) {
         Log.d("appGL", "Renderer : onSurfaceChanged w=$width, h=$height")
-        jni.initGL(assetMgr)
-        jni.resizeGL(width, height)
-
+        jni.initGL(assetMgr, width, height)
     }
 
     override fun onDrawFrame(gl: GL10) {
