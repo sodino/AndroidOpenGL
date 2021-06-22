@@ -11,8 +11,10 @@ layout(location=3) in vec2 vTexCoordinate;
 out vec3 tmpColor;
 out vec2 tmpTexCoordinate;
 
+uniform mat4 transform;
+
 void main() {
-  gl_Position = vPosition;
+  gl_Position = transform * vPosition;
   tmpColor = vColor;
   tmpTexCoordinate = vec2(vTexCoordinate.x, vTexCoordinate.y);
 }
