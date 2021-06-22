@@ -41,7 +41,6 @@ GLuint gProgram;
 GLuint gLocation_vPosition;
 GLuint gLocation_vColor;
 GLuint gLocation_vTexCoordinate;
-GLuint gLocation_transform;
 
 unsigned int VAO            = 0;           // vertex array object
 unsigned int VBO            = 0;           // vertex buffer object
@@ -58,6 +57,26 @@ static void checkGLError(const char* tag) {
     for (GLint error = glGetError(); error; error = glGetError()) {
         logD("%s : glError=0x%x", tag, error);
     }
+}
+
+
+void initCoordinateSystemMatrices(jint width, jint height) {
+    glUseProgram(gProgram);
+    GLuint locModel = glGetUniformLocation(gProgram, "model");
+    GLuint locView = glGetUniformLocation(gProgram, "view");
+    GLuint locProjection = glGetUniformLocation(gProgram, "projection");
+
+    glm::mat4 mModel = glm::mat4(1.0f);
+    mModel = glm::rotate(mModel, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(mModel));
+
+    glm::mat4 mView = glm::mat4(1.0f);
+    mView = glm::translate(mView, glm::vec3(0.0f, 0.0f, -3.0f));
+    glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(mView));
+
+    glm::mat4 mProjection = glm::mat4(1.0);
+    mProjection = glm::perspective(glm::radians(45.0f), width * 1.0f / height, 0.1f, 100.0f);
+    glUniformMatrix4fv(locProjection, 1, GL_FALSE, glm::value_ptr(mProjection));
 }
 
 void loadAndCreateTexture(const char* assetImagePath,
@@ -230,20 +249,6 @@ void app_renderTriangle() {
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, texture1);
 
-
-    // an angle expressed in degrees.
-    static float angle = 1.0f;
-    angle += 0.01f;
-    // make sure to initialize matrix to identity matrix first
-    glm::mat4 transform = glm::mat4(1.0f);
-    // translate 0.5 along the x-axis and y-axis each
-    transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
-    // rotation around the z-axis
-    transform = glm::rotate(transform, angle, glm::vec3(0.0f, 0.0f, 1.0f));
-    // pass transform matrix to the shader
-    glUniformMatrix4fv(gLocation_transform, 1, GL_FALSE, glm::value_ptr(transform));
-
-
     // draw primitives using the currently active shader,
     // the previously defined vertex attribute configuration
     GLenum glEnum = onlyDrawLine ? GL_LINE_LOOP : GL_TRIANGLES;
@@ -258,7 +263,7 @@ void app_renderGLFrame() {
 }
 
 // legacy way to initGL
-void app_initGL() {
+void app_initGL(jint width, jint height) {
     if (gProgram != 0) {
         logD("app_initGL has been completed. Repeat call and return.");
         return;
@@ -329,9 +334,8 @@ void app_initGL() {
     loadAndCreateTexture("dog.png", &texture0, "texture0", defTextureUnit + 0);
     loadAndCreateTexture("flamingo.jpg", &texture1, "texture1", defTextureUnit + 1);
 
-    gLocation_transform = glGetUniformLocation(gProgram, "transform");
-    checkGLError("glGetUniformLocation transform");
-    logD("glGetUniformLocation(transform)=%d", gLocation_transform);
+    // initialization of three matrices of `model` `view` `projection`
+    initCoordinateSystemMatrices(width, height);
 
     // unbind
     glBindTexture(GL_TEXTURE_2D, 0);
