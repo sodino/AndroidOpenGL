@@ -11,10 +11,12 @@ layout(location=3) in vec2 vTexCoordinate;
 out vec3 tmpColor;
 out vec2 tmpTexCoordinate;
 
-uniform mat4 transform;
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
 
 void main() {
-  gl_Position = transform * vPosition;
+  gl_Position = projection * view * model * vPosition;
   tmpColor = vColor;
   tmpTexCoordinate = vec2(vTexCoordinate.x, vTexCoordinate.y);
 }
