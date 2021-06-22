@@ -1,6 +1,12 @@
 # AndroidOpenGL
 
 
+## feature/openGL_10rotatingCubes
+ 2021.06.22
+
+preview :  
+![10.rotating.cubes](./preview/10.rotating.cubes.gif)
+
 ## feature/openGL_rotatingCube
  2021.06.22
 
