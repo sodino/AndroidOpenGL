@@ -65,7 +65,19 @@ const GLfloat gTriangleVertices[] =
                 -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
                 -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
         };
-
+#define CUBE_NUMBERS 10
+const glm::vec3 cubePositions[CUBE_NUMBERS] = {
+        glm::vec3( 0.0f,  0.0f,  0.0f),
+        glm::vec3( 2.0f,  5.0f, -15.0f),
+        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3( 2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f,  3.0f, -7.5f),
+        glm::vec3( 1.3f, -2.0f, -2.5f),
+        glm::vec3( 1.5f,  2.0f, -2.5f),
+        glm::vec3( 1.5f,  0.2f, -1.5f),
+        glm::vec3(-1.3f,  1.0f, -1.5f)
+};
 // end : gl vertex
 
 // begin : gl variable
@@ -280,19 +292,24 @@ void app_renderTriangle() {
     glBindTexture(GL_TEXTURE_2D, texture1);
 
     GLuint locModel = glGetUniformLocation(gProgram, "model");
-    glm::mat4 mModel = glm::mat4(1.0f);
+
     static float tmp = 0.0f;
     tmp += 0.01f;
-    mModel = glm::rotate(mModel, tmp, glm::vec3(-0.5f, -1.0f, -1.0f));
-    glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(mModel));
+    for (GLuint i = 0; i < CUBE_NUMBERS; i ++) {
+        glm::mat4 mModel = glm::mat4(1.0f);
+        mModel = glm::translate(mModel, cubePositions[i]);
+        GLfloat angle = tmp * (i + 1);
+        mModel = glm::rotate(mModel, angle, glm::vec3(-0.5f, -1.0f, -1.0f));
+        glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(mModel));
 
 
-    // draw primitives using the currently active shader,
-    // the previously defined vertex attribute configuration
-    GLenum glEnum = onlyDrawLine ? GL_LINE_LOOP : GL_TRIANGLES;
-    // invoke `glDrawElements` instead of `glDrawArrays`
-    glDrawArrays(glEnum, 0, VERTEX_COUNT);
-//    glDrawElements(glEnum, VERTEX_COUNT, GL_UNSIGNED_INT, 0);
+        // draw primitives using the currently active shader,
+        // the previously defined vertex attribute configuration
+        GLenum glEnum = onlyDrawLine ? GL_LINE_LOOP : GL_TRIANGLES;
+        // invoke `glDrawElements` instead of `glDrawArrays`
+        glDrawArrays(glEnum, 0, VERTEX_COUNT);
+//      glDrawElements(glEnum, VERTEX_COUNT, GL_UNSIGNED_INT, 0);
+    }
 }
 
 void app_renderGLFrame() {
