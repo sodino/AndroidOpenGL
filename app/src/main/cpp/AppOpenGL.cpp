@@ -17,23 +17,55 @@
 
 
 // begin : gl vertex
-#define FLOAT_NUM_PER_POSITION 2  // the number of 'float' to define each position
-#define FLOAT_NUM_PER_COLOR    3  // the number of 'float' to define each color
+#define FLOAT_NUM_PER_POSITION 3  // the number of 'float' to define each position
 #define FLOAT_NUM_PER_TEXTURE  2  // the number of 'float' to define each texture
-#define VERTEX_COUNT           6  // 2 triangles have 6 vertices
+#define VERTEX_COUNT         6*6  // a cube have 36 vertices
 const GLfloat gTriangleVertices[] =
         {
-                // positions        // colors               // textures
-                -0.5f,  0.5f,       1.0f, 0.0f, 0.0f,       0.0f, 0.0f,            // top left vertex      index : 0
-                -0.5f, -0.5f,       0.0f, 1.0f, 0.0f,       0.0f, 1.0f,            // bottom left vertex   index : 1
-                 0.5f, -0.5f,       0.0f, 0.0f, 1.0f,       1.0f, 1.0f,            // bottom right vertex  index : 2
-                 0.5f,  0.5f,       0.0f, 0.0f, 0.0f,       1.0f, 0.0f             // top right vertex     index : 3
+                // positions          // textures
+                -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+                 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+                 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+                 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+                -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+                -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+                 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+                 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+                 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+                -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+                -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+                -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+                -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+                 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+                 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+                 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+                 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+                 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+                 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+                 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+                 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+                 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+                -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+                 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+                 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+                 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+                -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+                -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
         };
 
-unsigned int gIndices[] = {
-        0, 1, 2, // first triangle vertex indices
-        0, 2, 3  // second triangle vertex indices
-};
 // end : gl vertex
 
 // begin : gl variable
@@ -44,7 +76,6 @@ GLuint gLocation_vTexCoordinate;
 
 unsigned int VAO            = 0;           // vertex array object
 unsigned int VBO            = 0;           // vertex buffer object
-unsigned int IBO            = 0;           // index buffer object
 unsigned int texture0       = 0;           // texture `dog`
 unsigned int texture1       = 0;           // texture `flamingo`
 // end : gl variable
@@ -228,7 +259,7 @@ void app_renderClearColor() {
     // 'glClearColor' a confusing function name. specify color value for 'glClear' action
     glClearColor(rgb, rgb, rgb, 1.0f);
     // write color specified by 'glClearColor'
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void app_renderTriangle() {
@@ -241,7 +272,6 @@ void app_renderTriangle() {
 
     // activate gProgram, every shader and rendering call use this program
     glUseProgram(gProgram);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
     glBindVertexArray(VAO);
 
     glActiveTexture(GL_TEXTURE0);
@@ -249,12 +279,20 @@ void app_renderTriangle() {
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, texture1);
 
+    GLuint locModel = glGetUniformLocation(gProgram, "model");
+    glm::mat4 mModel = glm::mat4(1.0f);
+    static float tmp = 0.0f;
+    tmp += 0.01f;
+    mModel = glm::rotate(mModel, tmp, glm::vec3(-0.5f, -1.0f, -1.0f));
+    glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(mModel));
+
+
     // draw primitives using the currently active shader,
     // the previously defined vertex attribute configuration
     GLenum glEnum = onlyDrawLine ? GL_LINE_LOOP : GL_TRIANGLES;
     // invoke `glDrawElements` instead of `glDrawArrays`
-//    glDrawArrays(glEnum, 0, VERTEX_COUNT);
-    glDrawElements(glEnum, VERTEX_COUNT, GL_UNSIGNED_INT, 0);
+    glDrawArrays(glEnum, 0, VERTEX_COUNT);
+//    glDrawElements(glEnum, VERTEX_COUNT, GL_UNSIGNED_INT, 0);
 }
 
 void app_renderGLFrame() {
@@ -280,7 +318,6 @@ void app_initGL(jint width, jint height) {
     glGenVertexArrays(1, &VAO);
     checkGLError("glGenVertexArray");
     glGenBuffers(1, &VBO);
-    glGenBuffers(1, &IBO);
     checkGLError("glGenBuffers");
     // bind the VAO first, then bind and set vertex buffers(s), and then configure vertex attribute(s).
     glBindVertexArray(VAO);
@@ -290,10 +327,6 @@ void app_initGL(jint width, jint height) {
     glBufferData(GL_ARRAY_BUFFER, sizeof(gTriangleVertices), gTriangleVertices, GL_STATIC_DRAW);
     checkGLError("VBO glBindBuffer & glBufferData");
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(gIndices), gIndices, GL_STATIC_DRAW);
-    checkGLError("IBO glBindBuffer & glBufferData");
-
     gLocation_vPosition = glGetAttribLocation(gProgram, "vPosition");
     checkGLError("glGetAttribLocation vPosition");
     logD("glGetAttribLocation(vPosition)=%d", gLocation_vPosition);
@@ -301,23 +334,10 @@ void app_initGL(jint width, jint height) {
                           FLOAT_NUM_PER_POSITION,
                           GL_FLOAT, GL_FALSE,
                           // each row has 5 float numbers to define position(s) and color(s).
-                          (FLOAT_NUM_PER_POSITION + FLOAT_NUM_PER_COLOR + FLOAT_NUM_PER_TEXTURE) * sizeof(float),
+                          (FLOAT_NUM_PER_POSITION + FLOAT_NUM_PER_TEXTURE) * sizeof(float),
                           // Beginning with position(s) float data each row, so offset is 0.
                           0);
     glEnableVertexAttribArray(gLocation_vPosition);
-
-    gLocation_vColor = glGetAttribLocation(gProgram, "vColor");
-    checkGLError("glGetAttribLocation vColor");
-    logD("glGetAttribLocation(vColor)=%d", gLocation_vColor);
-    glVertexAttribPointer(gLocation_vColor,
-                          FLOAT_NUM_PER_COLOR,
-                          GL_FLOAT, GL_FALSE,
-                          // each row has 5 float numbers to define position(s) and color(s).
-                          (FLOAT_NUM_PER_POSITION + FLOAT_NUM_PER_COLOR + FLOAT_NUM_PER_TEXTURE) * sizeof(float),
-                          // read position(s) float data first at each row, then color's data.
-                          // so offset is (positionNum * float.size)
-                          (void*)(FLOAT_NUM_PER_POSITION * sizeof(float)));
-    glEnableVertexAttribArray(gLocation_vColor);
 
     gLocation_vTexCoordinate = glGetAttribLocation(gProgram, "vTexCoordinate");
     checkGLError("glGetAttribLocation vTexCoordinate");
@@ -325,8 +345,8 @@ void app_initGL(jint width, jint height) {
     glVertexAttribPointer(gLocation_vTexCoordinate,
                           FLOAT_NUM_PER_TEXTURE,
                           GL_FLOAT, GL_FALSE,
-                          (FLOAT_NUM_PER_POSITION + FLOAT_NUM_PER_COLOR + FLOAT_NUM_PER_TEXTURE) * sizeof(float),
-                          (void*)((FLOAT_NUM_PER_POSITION + FLOAT_NUM_PER_COLOR) * sizeof(float)));
+                          (FLOAT_NUM_PER_POSITION + FLOAT_NUM_PER_TEXTURE) * sizeof(float),
+                          (void*)((FLOAT_NUM_PER_POSITION) * sizeof(float)));
     glEnableVertexAttribArray(gLocation_vTexCoordinate);
 
     // load and create texture
@@ -339,11 +359,12 @@ void app_initGL(jint width, jint height) {
 
     // unbind
     glBindTexture(GL_TEXTURE_2D, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
     // end : configuration for VAO & VBO
+
+    glEnable(GL_DEPTH_TEST);
 }
 
 void app_destroyGL() {
@@ -354,10 +375,8 @@ void app_destroyGL() {
 
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &IBO);
     VAO = 0;
     VBO = 0;
-    IBO = 0;
 }
 
 void app_onlyDrawLine(jboolean onlyLine) {
