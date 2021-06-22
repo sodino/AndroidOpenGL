@@ -234,6 +234,7 @@ void app_renderTriangle() {
     // an angle expressed in degrees.
     static float angle = 1.0f;
     angle += 0.01f;
+    // make sure to initialize matrix to identity matrix first
     glm::mat4 transform = glm::mat4(1.0f);
     // translate 0.5 along the x-axis and y-axis each
     transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
