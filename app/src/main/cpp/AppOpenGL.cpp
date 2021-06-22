@@ -10,6 +10,12 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "img/stb_image.h"
 
+#include <ctime>
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
+
+
 // begin : gl vertex
 #define FLOAT_NUM_PER_POSITION 2  // the number of 'float' to define each position
 #define FLOAT_NUM_PER_COLOR    3  // the number of 'float' to define each color
@@ -35,6 +41,7 @@ GLuint gProgram;
 GLuint gLocation_vPosition;
 GLuint gLocation_vColor;
 GLuint gLocation_vTexCoordinate;
+GLuint gLocation_transform;
 
 unsigned int VAO            = 0;           // vertex array object
 unsigned int VBO            = 0;           // vertex buffer object
@@ -223,6 +230,19 @@ void app_renderTriangle() {
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, texture1);
 
+
+    // an angle expressed in degrees.
+    static float angle = 1.0f;
+    angle += 0.01f;
+    glm::mat4 transform = glm::mat4(1.0f);
+    // translate 0.5 along the x-axis and y-axis each
+    transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
+    // rotation around the z-axis
+    transform = glm::rotate(transform, angle, glm::vec3(0.0f, 0.0f, 1.0f));
+    // pass transform matrix to the shader
+    glUniformMatrix4fv(gLocation_transform, 1, GL_FALSE, glm::value_ptr(transform));
+
+
     // draw primitives using the currently active shader,
     // the previously defined vertex attribute configuration
     GLenum glEnum = onlyDrawLine ? GL_LINE_LOOP : GL_TRIANGLES;
@@ -307,6 +327,10 @@ void app_initGL() {
     int defTextureUnit = 0; // Location of a texture is known as a TEXTURE UNIT
     loadAndCreateTexture("dog.png", &texture0, "texture0", defTextureUnit + 0);
     loadAndCreateTexture("flamingo.jpg", &texture1, "texture1", defTextureUnit + 1);
+
+    gLocation_transform = glGetUniformLocation(gProgram, "transform");
+    checkGLError("glGetUniformLocation transform");
+    logD("glGetUniformLocation(transform)=%d", gLocation_transform);
 
     // unbind
     glBindTexture(GL_TEXTURE_2D, 0);
