@@ -127,6 +127,22 @@ transform = glm::rotate(transform,
 preivew :  
 ![matrix.transformation](./preview/matrix.sample.gif)
 
+## feature/openGL_textureCoordinateAndWrapping
+ 2021.06.21
+
+* Adjust the size of the texture display area  
+ The components of texture coordinates are named `S`, `T`, and `R`.  
+ If values of them exceeding the boundary of 0 and 1, the area displayed texture will become SMALLER!  
+ As you see, [SCALE_OFFSET](app/src/main/cpp/AppOpenGL.cpp#L18-L18) is equal to `1.0f`,
+ a complete texture image will be added to each of the front and back directions along the coordinate axis.  
+ Finally, there are `a total of 3 textures` on each coordinate axis.
+* Adjust the texture wrapping setting.
+
+
+preview :  
+![texture.setting.adjusting](./preview/texture.setting.adjusting.png)
+
+
 ## feature/openGL_mixTexture
  2021.06.21
 
