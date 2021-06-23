@@ -67,14 +67,22 @@ void initCoordinateSystemMatrices(jint width, jint height) {
     GLuint locProjection = glGetUniformLocation(gProgram, "projection");
 
     glm::mat4 mModel = glm::mat4(1.0f);
+    // tilt -55 degrees along the x-axis
     mModel = glm::rotate(mModel, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(mModel));
 
     glm::mat4 mView = glm::mat4(1.0f);
+    // a bit farther away from us along z-axis.
+    // -3.0f : the reverse direction of where we want to move
+    // it should display smaller as the larger the negative value.
     mView = glm::translate(mView, glm::vec3(0.0f, 0.0f, -3.0f));
     glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(mView));
 
     glm::mat4 mProjection = glm::mat4(1.0);
+    // Use perspective projection for our scene so we declare the projection matrix like this:
+    // fov : field of view
+    // aspect : aspect ratio which is calculated by dividing the viewport's width and height
+    // zNear & zFar : set the near and far plane of frustum.
     mProjection = glm::perspective(glm::radians(45.0f), width * 1.0f / height, 0.1f, 100.0f);
     glUniformMatrix4fv(locProjection, 1, GL_FALSE, glm::value_ptr(mProjection));
 }
