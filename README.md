@@ -1,5 +1,26 @@
 # AndroidOpenGL
 
+
+## 17. feature/openGL_spinning
+ 2021.06.23
+
+10 cubes spin around the origin center point.
+
+OpenGL by itself is not familiar with the concept of a `camera`,  
+but we can try to simulate one by moving all objects in the scene in the `reverse` direction,  
+giving the ILLUSION that we are moving.
+
+This time, we specify `view` matrix to show the spinning animation around the origin center point.
+* The assignment of `radius` should consider the `z-near` and `z-far` plane.
+It will be rendered only the vertices between the near and far plane and inside the frustum.
+* `LookAt` matrix : Transform any vector to the `camera/eye` coordinate space by multiplying `LookAt` matrix.  
+Use a little bit of trigonometry to create an `cameraX` and `cameraZ` coordinate each frame to make up the camera position.  
+We keep the target of the scene at the origin center point (0, 0, 0).  
+The `camera/eye` rotates around the y-axis.
+
+preview :  
+![spin.around.the.center.point](./preview/spinning.gif)
+
 ## 16. feature/openGL_10rotatingCubes
  2021.06.22
 
@@ -7,8 +28,7 @@ Each cube looks the same but only differ in where it's located in the world with
 1. Define a translation vector [`cubePosition`](app/src/main/cpp/AppOpenGL.cpp#L69-L80) for each cube that specifies its position in world space.
 2. Within the render loop, call `glDrawArrays` 10 times with a different model matrix, also add a small unique rotation to each cube.
 
-preview :
-
+preview :  
 ![rotating.cube](./preview/rotating.cube.gif)
 
 
@@ -62,7 +82,7 @@ together with many other objects also placed `relative to this world's origin`.
 4. Clip coordinates are processed to the -1.0 and 1.0 range and determine which vertices will end up on the screen.
 5. Transform the clip coordinates to screen coordinates in a process called `viewport transform`.
 
-The reason transforming our vertices into all these different spaces is that some operations make more sense or are easier to use in certain coordinate systems.  
+The reason transforming our vertices into all these different spaces is that some operations make more sense or are easier to use in certain coordinate systems.
 For example, when modifying your object it makes most sence to do this in LOCAL SPACE,  
 while calculating certain operations on the object with respect to the position of other objects makes most sense in world coordinates and so on.
 
@@ -121,7 +141,7 @@ preivew :
 * Adjust the size of the texture display area  
  The components of texture coordinates are named `S`, `T`, and `R`.  
  If values of them exceeding the boundary of 0 and 1, the area displayed texture will become SMALLER!  
- As you see, [SCALE_OFFSET](app/src/main/cpp/AppOpenGL.cpp#L18-L18) is equal to `1.0f`,
+ As you see, [SCALE_OFFSET](app/src/main/cpp/AppOpenGL.cpp#L18-L18) is equal to `1.0f`,  
  a complete texture image will be added to each of the front and back directions along the coordinate axis.  
  Finally, there are `a total of 3 textures` on each coordinate axis.
 * Adjust the texture wrapping setting.
@@ -245,7 +265,7 @@ Learning focus :
 * Shader Language always begin with a version declaration.
   The default version value is `version 100`.  
   Adding a `\n` as a line separator is necessary.
-* Declare an output variable `out vec4 colorFromVertex` in vertex shader,
+* Declare an output variable `out vec4 colorFromVertex` in vertex shader,  
   and a similar input variable `in vec4 colorFromVertex` in fragment shader with same name and same type.
 * `gl_FragColor` is deprecated.  
   The modern way of writing to the output buffers from a fragment shader,  
