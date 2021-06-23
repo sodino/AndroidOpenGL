@@ -97,7 +97,7 @@ transform = glm::rotate(transform,
             );
 ````
 
-preivew :
+preivew :  
 ![matrix.transformation](./preview/matrix.sample.gif)
 
 ## feature/openGL_textureCoordinateAndWrapping
@@ -112,7 +112,7 @@ preivew :
 * Adjust the texture wrapping setting.
 
 
-preview :
+preview :  
 ![texture.setting.adjusting](./preview/texture.setting.adjusting.png)
 
 
@@ -157,52 +157,6 @@ preivew :
 * a bit farther away from us along z-axis.
 
 ![coordinate.system.demo](./preview/coordinate.system.png)
-
-## feature/openGL_matrix
- 2021.06.21
-
-Import [glm](https://glm.g-truc.net/0.9.8/index.html) to Android Studio :
-**First**, download OpenGL Mathematics library [here](https://glm.g-truc.net/0.9.9/index.html)
-**Second**, extract and copy folder "../glm/glm" to your project location at "../app/src/main/cpp"  
-**Third**, on CMakeList.txt, add the following:
-````
-add_subdirectory(glm)
-````
-**Fourth**, include glm headers to c/c++ file
-
-
-The beginning of all matrix operations is derived from an identity matrix:
-```
-// Make sure to initialize matrix to identity matrix first :
-glm::mat4 transform = glm::mat4(1.0f);
-```
-
-Rotations in 3D are specified with an angle and a `rotation axis`.
-This demo, the textured rectangle is on the XY plane so we want to rotate around the `Z-axis`.
-````
-transform = glm::rotate(transform,
-                angle,
-                glm::vec3(0.0f, 0.0f, 1.0f)  // we rotate the images 90 degrees around the `Z-axis`.
-            );
-````
-
-preivew :
-![matrix.transformation](./preview/matrix.sample.gif)
-
-## feature/openGL_textureCoordinateAndWrapping
- 2021.06.21
-
-* Adjust the size of the texture display area
- The components of texture coordinates are named `S`, `T`, and `R`.  
- If values of them exceeding the boundary of 0 and 1, the area displayed texture will become SMALLER!
- As you see, [SCALE_OFFSET](app/src/main/cpp/AppOpenGL.cpp#L18-L18) is equal to `1.0f`,
- a complete texture image will be added to each of the front and back directions along the coordinate axis.
- Finally, there are `a total of 3 textures` on each coordinate axis.
-* Adjust the texture wrapping setting.
-
-
-preview :
-![texture.setting.adjusting](./preview/texture.setting.adjusting.png)
 
 
 ## feature/openGL_matrix
