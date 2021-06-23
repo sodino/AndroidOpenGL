@@ -7,6 +7,48 @@
 
 ![rotating.cube](./preview/rotating.cube.gif)
 
+## feature/openGL_coordinateSystem
+ 2021.06.22  
+An object's vertices to several COORDINATE SYSTEMs before finally transforming them to NORMALIZED DEVICE COORDINATEs.
+
+There are a total 5 different coordinate systems that are of importance to us:
+* Local Space (or Object Space)
+* World Space
+* View Space  (or Eye Space)
+* Clip Space
+* Screen Space
+
+Those are all a different state at which our vertices will be transformed in before finally ending up as fragments.
+
+1. Local coordinates are the coordinates of your object relative to its local origin; they're the coordinates your object BEGINs in.
+2. World-space coordinates are coordinates in respect of a larger world.  
+These coordinates are relative to some global origin of the world,  
+together with many other objects also placed `relative to this world's origin`.
+3. Transform the world coordinates to view-space coordinates in such a way that each coordinate is as seen from the camera or viewer's point of view.
+4. Clip coordinates are processed to the -1.0 and 1.0 range and determine which vertices will end up on the screen.
+5. Transform the clip coordinates to screen coordinates in a process called `viewport transform`.
+
+The reason transforming our vertices into all these different spaces is that some operations make more sense or are easier to use in certain coordinate systems.  
+For example, when modifying your object it makes most sence to do this in LOCAL SPACE,  
+while calculating certain operations on the object with respect to the position of other objects makes most sense in world coordinates and so on.
+
+vertex.vsh :  
+Create a transformation matrix for each of the aforementioned steps :  
+model, view and project matrix.
+
+A vertex coordinates is then transformed to clip coordinates as follows :
+````
+gl_Position = projection * view * model * vPosition;
+````
+NOTE: the order of matrix multiplication is REVERSED.  
+Remember that we need to read matrix multiplication `from right to left`.
+
+preivew :
+* tilt -55 degrees along the x-axis
+* a bit farther away from us along z-axis.
+
+![coordinate.system.demo](./preview/coordinate.system.png)
+
 ## feature/openGL_matrix
  2021.06.21
 
@@ -37,6 +79,22 @@ transform = glm::rotate(transform,
 
 preivew :  
 ![matrix.transformation](./preview/matrix.sample.gif)
+
+## feature/openGL_textureCoordinateAndWrapping
+ 2021.06.21
+
+* Adjust the size of the texture display area  
+ The components of texture coordinates are named `S`, `T`, and `R`.  
+ If values of them exceeding the boundary of 0 and 1, the area displayed texture will become SMALLER!  
+ As you see, [SCALE_OFFSET](app/src/main/cpp/AppOpenGL.cpp#L18-L18) is equal to `1.0f`,
+ a complete texture image will be added to each of the front and back directions along the coordinate axis.  
+ Finally, there are `a total of 3 textures` on each coordinate axis.
+* Adjust the texture wrapping setting.
+
+
+preview :  
+![texture.setting.adjusting](./preview/texture.setting.adjusting.png)
+
 
 ## feature/openGL_mixTexture
  2021.06.21
