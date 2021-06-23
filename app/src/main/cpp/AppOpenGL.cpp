@@ -292,9 +292,25 @@ void app_renderTriangle() {
     glBindTexture(GL_TEXTURE_2D, texture1);
 
     GLuint locModel = glGetUniformLocation(gProgram, "model");
+    GLuint locView = glGetUniformLocation(gProgram, "view");
 
     static float tmp = 0.0f;
     tmp += 0.01f;
+
+    glm::mat4 mView = glm::mat4(1.0f);
+    // radius should consider the `z-near` and `z-far`
+    // It will be rendered only the vertices BETWEEN the near and far plane and INSIDE the frustum.
+    float radius = 30.0f;
+    float cameraX = sin(tmp) * radius;
+    float cameraZ = cos(tmp) * radius;
+
+    mView = glm::lookAt(
+                glm::vec3(cameraX, 0.0f, cameraZ),    // camera coordinates
+                glm::vec3(0.0f, 0.0f, 0.0f),          // the coordinates of the target point captured by the camera
+                glm::vec3(0.0f, 1.0f, 0.0f)           // camera rotates around the y-axis
+            );
+    glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(mView));
+
     for (GLuint i = 0; i < CUBE_NUMBERS; i ++) {
         glm::mat4 mModel = glm::mat4(1.0f);
         mModel = glm::translate(mModel, cubePositions[i]);
