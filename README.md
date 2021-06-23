@@ -1,5 +1,24 @@
 # AndroidOpenGL
 
+## feature/openGL_spinning
+ 2021.06.23
+
+10 cubes spin around the origin center point.
+
+OpenGL by itself is not familiar with the concept of a `camera`,  
+but we can try to simulate one by moving all objects in the scene in the `reverse` direction,  
+giving the ILLUSION that we are moving.
+
+This time, we specify `view` matrix to show the spinning animation around the origin center point.
+* The assignment of `radius` should consider the `z-near` and `z-far` plane.
+It will be rendered only the vertices between the near and far plane and inside the frustum.
+* `LookAt` matrix : Transform any vector to the `camera/eye` coordinate space by multiplying `LookAt` matrix.  
+Use a little bit of trigonometry to create an `cameraX` and `cameraZ` coordinate each frame to make up the camera position.  
+We keep the target of the scene at the origin center point (0, 0, 0).  
+The `camera/eye` rotates around the y-axis.
+
+preview :
+![spin.around.the.center.point](./preview/spinning.gif)
 
 ## feature/openGL_10rotatingCubes
  2021.06.22
