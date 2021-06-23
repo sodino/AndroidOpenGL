@@ -2,8 +2,32 @@
 
 
 ## feature/openGL_rotatingCube
- 2021.06.22
+ 2021.06.22  
 
+Extend our 2D plane to a 3D cube.  
+To render a cube we need a total of 36 vertices(6 faces * 2 triangles * 3 vertices each).  
+The definition of 36 vertices is [gTriangleVertices](app/src/main/cpp/AppOpenGL.cpp#L23-L67).
+
+This demo, we didn't specify indices, so we'll draw the cube using `glDrawArrays` with a count of 36 vertices.
+
+OpenGL stores all its depth information in a `z-buffer`, also known as a `depth buffer`.  
+The depth is stored within each fragment(as the fragment's `z` value).  
+Whenever the fragment wants to output its color, OpenGL compares its depth values with the z-buffer.  
+If the current fragment is behind the other fragment, it is discarded, otherwise overwritten.  
+This process is called `depth testing` and is done automatically by OpenGL.
+
+We can enable depth testing using `glEnable`.
+```
+`glEnable` and `glDisable` functions allow us to enable/disable certain functionally in OpenGL.
+```
+
+Before each render iteration, the depth information of the previous frame stays in the buffer.  
+Therefore, we must first clear the depth buffer by specifying the `DEPTH_BUFFER_BIT` bit in the `glClear` function:
+````
+glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+````
+
+preview :  
 
 ![rotating.cube](./preview/rotating.cube.gif)
 
