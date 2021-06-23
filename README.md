@@ -1,8 +1,19 @@
 # AndroidOpenGL
 
 
-## feature/openGL_rotatingCube
- 2021.06.22  
+## feature/openGL_10rotatingCubes
+ 2021.06.22
+
+Each cube looks the same but only differ in where it's located in the world with each a different rotation.
+1. Define a translation vector [`cubePosition`](app/src/main/cpp/AppOpenGL.cpp#L69-L80) for each cube that specifies its position in world space.
+2. Within the render loop, call `glDrawArrays` 10 times with a different model matrix, also add a small unique rotation to each cube.
+
+preview :
+
+![rotating.cube](./preview/rotating.cube.gif)
+
+## feature/openGL_coordinateSystem
+ 2021.06.22
 
 Extend our 2D plane to a 3D cube.  
 To render a cube we need a total of 36 vertices(6 faces * 2 triangles * 3 vertices each).  
@@ -27,25 +38,10 @@ Therefore, we must first clear the depth buffer by specifying the `DEPTH_BUFFER_
 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 ````
 
-preview :  
-
-![rotating.cube](./preview/rotating.cube.gif)
-
-## feature/openGL_coordinateSystem
- 2021.06.22  
-An object's vertices to several COORDINATE SYSTEMs before finally transforming them to NORMALIZED DEVICE COORDINATEs.
-
-There are a total 5 different coordinate systems that are of importance to us:
-* Local Space (or Object Space)
-* World Space
-* View Space  (or Eye Space)
-* Clip Space
-* Screen Space
-
-Those are all a different state at which our vertices will be transformed in before finally ending up as fragments.
+preview :
 
 1. Local coordinates are the coordinates of your object relative to its local origin; they're the coordinates your object BEGINs in.
-2. World-space coordinates are coordinates in respect of a larger world.  
+2. World-space coordinates are coordinates in respect of a larger world.
 These coordinates are relative to some global origin of the world,  
 together with many other objects also placed `relative to this world's origin`.
 3. Transform the world coordinates to view-space coordinates in such a way that each coordinate is as seen from the camera or viewer's point of view.
@@ -64,7 +60,7 @@ A vertex coordinates is then transformed to clip coordinates as follows :
 ````
 gl_Position = projection * view * model * vPosition;
 ````
-NOTE: the order of matrix multiplication is REVERSED.  
+NOTE: the order of matrix multiplication is REVERSED.
 Remember that we need to read matrix multiplication `from right to left`.
 
 preivew :
@@ -72,6 +68,96 @@ preivew :
 * a bit farther away from us along z-axis.
 
 ![coordinate.system.demo](./preview/coordinate.system.png)
+
+## feature/openGL_matrix
+ 2021.06.21
+
+Import [glm](https://glm.g-truc.net/0.9.8/index.html) to Android Studio :
+**First**, download OpenGL Mathematics library [here](https://glm.g-truc.net/0.9.9/index.html)
+**Second**, extract and copy folder "../glm/glm" to your project location at "../app/src/main/cpp"  
+**Third**, on CMakeList.txt, add the following:
+````
+add_subdirectory(glm)
+````
+**Fourth**, include glm headers to c/c++ file
+
+
+The beginning of all matrix operations is derived from an identity matrix:
+```
+// Make sure to initialize matrix to identity matrix first :
+glm::mat4 transform = glm::mat4(1.0f);
+```
+
+Rotations in 3D are specified with an angle and a `rotation axis`.
+This demo, the textured rectangle is on the XY plane so we want to rotate around the `Z-axis`.
+````
+transform = glm::rotate(transform,
+                angle,
+                glm::vec3(0.0f, 0.0f, 1.0f)  // we rotate the images 90 degrees around the `Z-axis`.
+            );
+````
+
+preivew :  
+![matrix.transformation](./preview/matrix.sample.gif)
+
+## feature/openGL_textureCoordinateAndWrapping
+ 2021.06.21
+
+* Adjust the size of the texture display area
+ The components of texture coordinates are named `S`, `T`, and `R`.  
+ If values of them exceeding the boundary of 0 and 1, the area displayed texture will become SMALLER!
+ As you see, [SCALE_OFFSET](app/src/main/cpp/AppOpenGL.cpp#L18-L18) is equal to `1.0f`,
+ a complete texture image will be added to each of the front and back directions along the coordinate axis.
+ Finally, there are `a total of 3 textures` on each coordinate axis.
+* Adjust the texture wrapping setting.
+
+
+preview :  
+![texture.setting.adjusting](./preview/texture.setting.adjusting.png)
+
+
+## feature/openGL_coordinateSystem
+ 2021.06.22
+An object's vertices to several COORDINATE SYSTEMs before finally transforming them to NORMALIZED DEVICE COORDINATEs.
+
+There are a total 5 different coordinate systems that are of importance to us:
+* Local Space (or Object Space)
+* World Space
+* View Space  (or Eye Space)
+* Clip Space
+* Screen Space
+
+Those are all a different state at which our vertices will be transformed in before finally ending up as fragments.
+
+1. Local coordinates are the coordinates of your object relative to its local origin; they're the coordinates your object BEGINs in.
+2. World-space coordinates are coordinates in respect of a larger world.
+These coordinates are relative to some global origin of the world,  
+together with many other objects also placed `relative to this world's origin`.
+3. Transform the world coordinates to view-space coordinates in such a way that each coordinate is as seen from the camera or viewer's point of view.
+4. Clip coordinates are processed to the -1.0 and 1.0 range and determine which vertices will end up on the screen.
+5. Transform the clip coordinates to screen coordinates in a process called `viewport transform`.
+
+The reason transforming our vertices into all these different spaces is that some operations make more sense or are easier to use in certain coordinate systems.  
+For example, when modifying your object it makes most sence to do this in LOCAL SPACE,  
+while calculating certain operations on the object with respect to the position of other objects makes most sense in world coordinates and so on.
+
+vertex.vsh :  
+Create a transformation matrix for each of the aforementioned steps :  
+model, view and project matrix.
+
+A vertex coordinates is then transformed to clip coordinates as follows :
+````
+gl_Position = projection * view * model * vPosition;
+````
+NOTE: the order of matrix multiplication is REVERSED.
+Remember that we need to read matrix multiplication `from right to left`.
+
+preivew :
+* tilt -55 degrees along the x-axis
+* a bit farther away from us along z-axis.
+
+![coordinate.system.demo](./preview/coordinate.system.png)
+
 
 ## feature/openGL_matrix
  2021.06.21
@@ -279,7 +365,7 @@ Learning focus :
 legacy way for Triangle Drawing
 
 Learning focus :
-*  [app_initGL](app/src/main/cpp/AppOpenGL.cpp#L172-L172) :  
+*  [app_initGL](app/src/main/cpp/AppOpenGL.cpp#L172-L172) :
    1. [loadGLShader](app/src/main/cpp/AppOpenGL.cpp#L44-L44)  
        `glCreateShader`  
        `glShaderSource`  
@@ -309,10 +395,10 @@ preview :
 
 ## feature/print_openGL_infos
  2021.06.16  
-print openGL infos by glGetString.   
-Only four field values can be read :   
+print openGL infos by glGetString.  
+Only four field values can be read :  
 `GL_VERSION` `GL_VENDOR` `GL_RENDERER` `GL_EXTENSIONS`.  
-And it makes sense to invoke `glGetString` after `GLSurfaceView` is initialized, otherwise it returns null.  
+And it makes sense to invoke `glGetString` after `GLSurfaceView` is initialized, otherwise it returns null.
 
-Both Java(see `GL3Renderer`) and C++(see `printOpenGL.cpp`) implementations are dealt with separately.  
+Both Java(see `GL3Renderer`) and C++(see `printOpenGL.cpp`) implementations are dealt with separately.
 
