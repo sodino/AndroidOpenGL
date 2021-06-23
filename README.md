@@ -1,7 +1,6 @@
 # AndroidOpenGL
 
-
-## feature/openGL_10rotatingCubes
+## 16. feature/openGL_10rotatingCubes
  2021.06.22
 
 Each cube looks the same but only differ in where it's located in the world with each a different rotation.
@@ -12,9 +11,10 @@ preview :
 
 ![rotating.cube](./preview/rotating.cube.gif)
 
-## feature/openGL_coordinateSystem
+
+## 15. feature/openGL_rotatingCube
  2021.06.22
-+
+
 Extend our 2D plane to a 3D cube.  
 To render a cube we need a total of 36 vertices(6 faces * 2 triangles * 3 vertices each).  
 The definition of 36 vertices is [gTriangleVertices](app/src/main/cpp/AppOpenGL.cpp#L23-L67).
@@ -38,85 +38,10 @@ Therefore, we must first clear the depth buffer by specifying the `DEPTH_BUFFER_
 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 ````
 
-preview :
-
-1. Local coordinates are the coordinates of your object relative to its local origin; they're the coordinates your object BEGINs in.
-2. World-space coordinates are coordinates in respect of a larger world.
-These coordinates are relative to some global origin of the world,  
-together with many other objects also placed `relative to this world's origin`.
-3. Transform the world coordinates to view-space coordinates in such a way that each coordinate is as seen from the camera or viewer's point of view.
-4. Clip coordinates are processed to the -1.0 and 1.0 range and determine which vertices will end up on the screen.
-5. Transform the clip coordinates to screen coordinates in a process called `viewport transform`.
-
-The reason transforming our vertices into all these different spaces is that some operations make more sense or are easier to use in certain coordinate systems.  
-For example, when modifying your object it makes most sence to do this in LOCAL SPACE,  
-while calculating certain operations on the object with respect to the position of other objects makes most sense in world coordinates and so on.
-
-vertex.vsh :  
-Create a transformation matrix for each of the aforementioned steps :  
-model, view and project matrix.
-
-A vertex coordinates is then transformed to clip coordinates as follows :
-````
-gl_Position = projection * view * model * vPosition;
-````
-NOTE: the order of matrix multiplication is REVERSED.
-Remember that we need to read matrix multiplication `from right to left`.
-
-preivew :
-* tilt -55 degrees along the x-axis
-* a bit farther away from us along z-axis.
-
-![coordinate.system.demo](./preview/coordinate.system.png)
-
-## feature/openGL_matrix
- 2021.06.21
-
-Import [glm](https://glm.g-truc.net/0.9.8/index.html) to Android Studio :
-**First**, download OpenGL Mathematics library [here](https://glm.g-truc.net/0.9.9/index.html)
-**Second**, extract and copy folder "../glm/glm" to your project location at "../app/src/main/cpp"  
-**Third**, on CMakeList.txt, add the following:
-````
-add_subdirectory(glm)
-````
-**Fourth**, include glm headers to c/c++ file
-
-
-The beginning of all matrix operations is derived from an identity matrix:
-```
-// Make sure to initialize matrix to identity matrix first :
-glm::mat4 transform = glm::mat4(1.0f);
-```
-
-Rotations in 3D are specified with an angle and a `rotation axis`.
-This demo, the textured rectangle is on the XY plane so we want to rotate around the `Z-axis`.
-````
-transform = glm::rotate(transform,
-                angle,
-                glm::vec3(0.0f, 0.0f, 1.0f)  // we rotate the images 90 degrees around the `Z-axis`.
-            );
-````
-
-preivew :  
-![matrix.transformation](./preview/matrix.sample.gif)
-
-## feature/openGL_textureCoordinateAndWrapping
- 2021.06.21
-
-* Adjust the size of the texture display area
- The components of texture coordinates are named `S`, `T`, and `R`.  
- If values of them exceeding the boundary of 0 and 1, the area displayed texture will become SMALLER!
- As you see, [SCALE_OFFSET](app/src/main/cpp/AppOpenGL.cpp#L18-L18) is equal to `1.0f`,
- a complete texture image will be added to each of the front and back directions along the coordinate axis.
- Finally, there are `a total of 3 textures` on each coordinate axis.
-* Adjust the texture wrapping setting.
-
-
 preview :  
-![texture.setting.adjusting](./preview/texture.setting.adjusting.png)
+![rotating.cube](./preview/rotating.cube.gif)
 
-
-## feature/openGL_coordinateSystem
+## 14. feature/openGL_coordinateSystem
  2021.06.22
 An object's vertices to several COORDINATE SYSTEMs before finally transforming them to NORMALIZED DEVICE COORDINATEs.
 
@@ -159,7 +84,7 @@ preivew :
 ![coordinate.system.demo](./preview/coordinate.system.png)
 
 
-## feature/openGL_matrix
+## 13. feature/openGL_matrix
  2021.06.21
 
 Import [glm](https://glm.g-truc.net/0.9.8/index.html) to Android Studio :  
@@ -190,7 +115,7 @@ transform = glm::rotate(transform,
 preivew :  
 ![matrix.transformation](./preview/matrix.sample.gif)
 
-## feature/openGL_textureCoordinateAndWrapping
+## 12. feature/openGL_textureCoordinateAndWrapping
  2021.06.21
 
 * Adjust the size of the texture display area  
@@ -206,7 +131,7 @@ preview :
 ![texture.setting.adjusting](./preview/texture.setting.adjusting.png)
 
 
-## feature/openGL_mixTexture
+## 11. feature/openGL_mixTexture
  2021.06.21
 
 Mixture effect of two images superimposed.
@@ -227,7 +152,7 @@ NOTE : Invoking `glUseProgram` to activate the shader before setting uniform!
 preview :  
 ![mixture.texture](./preview/mixTexture.png)
 
-## feature/openGL_helloTexture
+## 10. feature/openGL_helloTexture
  2021.06.19
 
 Load image from android asset folder, and apply it as texture.
@@ -260,7 +185,7 @@ Image Loading :
 preview :  
 ![hello.texture](./preview/hello.texture.png)
 
-## feature/ndk_AAssetManager
+## 9. feature/ndk_AAssetManager
  2021.06.19  
 Move the shader codes out from CPP code, then store it separately in the assets folder.  
 Code **decoupling** optimization.  
@@ -278,7 +203,7 @@ Usage of `AAsset_Manager`:
 * Read target data by invoking `AAsset_read`
 * Finally, `AAsset_close` with parameter `AAseset*`.
 
-## feature/openGL_shaderInterpolation
+## 8. feature/openGL_shaderInterpolation
  2021.06.18  
 Demonstrate the realization of shader interpolation.
 
@@ -295,7 +220,7 @@ Hint : [Shader code](app/src/main/cpp/AppOpenGL.cpp#L10-L21) end with `\0` to in
 preview :  
 <img src="./preview/shader.interpolation.png" alt="drawing" width="500"/>
 
-## feature/glsl_uniform
+## 7. feature/glsl_uniform
  2021.06.18  
 `uniform` usage :  
 A way to pass data from our application on the CPU to the shaders on the GPU.
@@ -309,7 +234,7 @@ Learning focus :
 preview :  
 The color of triangles is constantly changing with the value calculated by the CPU.
 
-## feature/glsl_in_out
+## 6. feature/glsl_in_out
  2021.06.18  
 'in' 'out' variable usage :  
 OpenGL will link those variables together and then it it possible to send data from vertex shader to fragment shader after linking a program object.  
@@ -331,7 +256,7 @@ preview :
 The color of <span style="color:purple">triangle</span> will become <span style="color:purple">purple</span>.  
 <span style="color:purple"><font size="150">▲</font></span>
 
-## feature/openGL_helloSquare_IBO
+## 5. feature/openGL_helloSquare_IBO
  2021.06.18  
 IBO/EBO usage : drawing a square composed of two triangles.
 
@@ -346,7 +271,7 @@ preview :
 <img src="./preview/hello.square.IBO.png" alt="drawing" width="500"/>
 
 
-## feature/openGL_helloTriangle
+## 4. feature/openGL_helloTriangle
  2021.06.17
 
 use VAO/VBO to draw triangle
@@ -359,7 +284,7 @@ Learning focus :
   preview :
 <img src="./preview/hello.triangle.2mode.png" alt="drawing" width="500"/>
 
-## feature/openGL_helloTriangle_legacy
+## 3. feature/openGL_helloTriangle_legacy
  2021.06.17
 
 legacy way for Triangle Drawing
@@ -386,14 +311,14 @@ because the pointer should not be treated as a byte offset into the buffer.
 preview :  
 ![legacy.drawing.triangle](./preview/hello.triangle.legacy.png)
 
-## feature/openGL_renderClearColor
+## 2. feature/openGL_renderClearColor
  2021.06.16
 Understand and practise of function `glClearColor` and `glClear`.
 
 preview :  
 ![renderClearColor.gif](./preview/openGL.renderClearColor.gif)
 
-## feature/print_openGL_infos
+## 1. feature/print_openGL_infos
  2021.06.16  
 print openGL infos by glGetString.  
 Only four field values can be read :  
