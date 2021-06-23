@@ -29,7 +29,7 @@ Each cube looks the same but only differ in where it's located in the world with
 2. Within the render loop, call `glDrawArrays` 10 times with a different model matrix, also add a small unique rotation to each cube.
 
 preview :  
-![rotating.cube](./preview/rotating.cube.gif)
+![rotating.cube](./preview/10.rotating.cubes.gif)
 
 
 ## 15. feature/openGL_rotatingCube
