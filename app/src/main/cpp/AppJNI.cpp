@@ -46,3 +46,25 @@ JNIEXPORT void JNICALL
 Java_sodino_open_gl_JniHandler_onlyDrawLine(JNIEnv *env, jobject thiz, jboolean onlyLine) {
     app_onlyDrawLine(onlyLine);
 }
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_sodino_open_gl_JniHandler_setYawAngle(JNIEnv *env, jobject thiz, jint angle) {
+    if (angle < 0) {
+        angle = 0;
+    } else if (angle >= 360) {
+        angle = 360;
+    }
+    app_setYawAngle(angle);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_sodino_open_gl_JniHandler_setPitchAngle(JNIEnv *env, jobject thiz, jint angle) {
+    if (angle < 0) {
+        angle = 0;
+    } else if (angle >= 360) {
+        angle = 360;
+    }
+    app_setPitchAngle(angle);
+}

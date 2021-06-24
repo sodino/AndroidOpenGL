@@ -85,6 +85,8 @@ GLuint gProgram;
 GLuint gLocation_vPosition;
 GLuint gLocation_vColor;
 GLuint gLocation_vTexCoordinate;
+int degreePitch             = 0;
+int degreeYaw               = 0;
 
 unsigned int VAO            = 0;           // vertex array object
 unsigned int VBO            = 0;           // vertex buffer object
@@ -274,6 +276,51 @@ void app_renderClearColor() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
+void calculateParameters(glm::vec3& eye, glm::vec3& up) {
+    // radius should consider the `z-near` and `z-far`
+    // It will be rendered only the vertices BETWEEN the near and far plane and INSIDE the frustum.
+    float radius = 30.0f;
+    float radianYaw = glm::radians(degreeYaw * 1.0f);
+    float radianPitch = glm::radians(degreePitch * 1.0f);
+
+//    float cameraX = sin(radianYaw) * radius;
+//    float cameraZ = cos(radianYaw) * radius;
+//
+//    eye.x = cameraX;
+//    eye.z = cameraZ;
+
+    float AE = radius * sin(radianPitch);
+
+    // start : eye
+    float AO = radius * cos(radianPitch);
+    float AB = AO * sin(radianYaw);
+    float AC = AO * cos(radianYaw);
+
+    eye.x = AC;
+    eye.y = AE;
+    eye.z = AB;
+//    logD("calculateParameters degreePitch=%d, degreeYaw=%d; radianPitch=%f, radianYaw=%f; x=%f, y=%f, z=%f; AE=%f, AO=%f;",
+//         degreePitch, degreeYaw,
+//         radianPitch, radianYaw,
+//         AC, AE, AB,
+//         AE, AO);
+    // end : eye
+
+
+//    // start : up
+//    float AF = AE * cos(radianPitch);
+//
+//    float DF = AF * cos(radianPitch);
+//    float DA = AF * sin(radianPitch);
+//
+//    float Dz = DA * sin(radianYaw);
+//    float Dx = DA * cos(radianYaw);
+//    up.x = -Dx + eye.x;
+//    up.y = DF + eye.y;
+//    up.z = -Dz + eye.z;
+//    // end : up
+}
+
 void app_renderTriangle() {
     if (gProgram == 0) {
         return;
@@ -298,16 +345,15 @@ void app_renderTriangle() {
     tmp += 0.01f;
 
     glm::mat4 mView = glm::mat4(1.0f);
-    // radius should consider the `z-near` and `z-far`
-    // It will be rendered only the vertices BETWEEN the near and far plane and INSIDE the frustum.
-    float radius = 30.0f;
-    float cameraX = sin(tmp) * radius;
-    float cameraZ = cos(tmp) * radius;
-
+    glm::vec3 eye = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+    calculateParameters(eye, up);
     mView = glm::lookAt(
-                glm::vec3(cameraX, 0.0f, cameraZ),    // camera coordinates
+//                glm::vec3(cameraX, 0.0f, cameraZ),    // camera coordinates
+                eye,
                 glm::vec3(0.0f, 0.0f, 0.0f),          // the coordinates of the target point captured by the camera
-                glm::vec3(0.0f, 1.0f, 0.0f)           // camera rotates around the y-axis
+//                glm::vec3(0.0f, 1.0f, 0.0f)           // camera rotates around the y-axis
+                up
             );
     glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(mView));
 
@@ -414,4 +460,13 @@ void app_destroyGL() {
 
 void app_onlyDrawLine(jboolean onlyLine) {
     onlyDrawLine = onlyLine;
+}
+
+void app_setPitchAngle(jint angle) {
+    degreePitch = angle;
+}
+
+void app_setYawAngle(jint angle) {
+    degreeYaw = angle;
+    logD("set YawAngle=%d", angle);
 }
