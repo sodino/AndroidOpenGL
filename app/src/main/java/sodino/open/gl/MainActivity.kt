@@ -3,11 +3,19 @@ package sodino.open.gl
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.SeekBar
 import sodino.open.gl.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity(), View.OnClickListener {
+class MainActivity :
+    AppCompatActivity(),
+    View.OnClickListener,
+    SeekBar.OnSeekBarChangeListener {
 
     private lateinit var binding: ActivityMainBinding
+
+    private val jniHandler by lazy {
+        binding.surfaceView.jniHandler
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,6 +27,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         binding.sampleText.text = "Hello World, myOpenGL."
         binding.btnDrawLineSwitch.setOnClickListener(this)
         setDrawLineText(false)
+
+        binding.seekBarPitch.setOnSeekBarChangeListener(this)
+        binding.seekBarYaw.setOnSeekBarChangeListener(this)
     }
 
     private fun setDrawLineText(onlyLine : Boolean = false) {
@@ -42,6 +53,27 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 setDrawLineText(next)
             }
         }
+    }
+
+    override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+        if (!fromUser) {
+            // only handle user actions
+            return
+        }
+
+        if (seekBar == binding.seekBarPitch) {
+            binding.txtPitch.text = "Angle of Pitch : ${progress}º"
+            jniHandler.setPitchAngle(progress)
+        } else if (seekBar == binding.seekBarYaw) {
+            binding.txtYaw.text = "Angle of Yaw : ${progress}º"
+            jniHandler.setYawAngle(progress)
+        }
+    }
+
+    override fun onStartTrackingTouch(seekBar: SeekBar) {
+    }
+
+    override fun onStopTrackingTouch(seekBar: SeekBar) {
     }
 
 

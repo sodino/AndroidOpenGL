@@ -21,7 +21,7 @@
         app:layout_constraintTop_toBottomOf="@id/sample_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
         />
     <Button
         android:layout_width="wrap_content"
@@ -32,5 +32,47 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:text="onlyDrawLine : FALSE"
+        />
+    <TextView
+        android:id="@+id/txtPitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/surfaceView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Angle of Pitch : 0º"
+        android:textAllCaps="false"
+        />
+    <SeekBar
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/seekBarPitch"
+        app:layout_constraintTop_toBottomOf="@id/txtPitch"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:max="360"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        />
+    <TextView
+        android:id="@+id/txtYaw"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/seekBarPitch"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Angle of Yaw : 0º"
+        android:textAllCaps="false"
+        />
+    <SeekBar
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/seekBarYaw"
+        app:layout_constraintTop_toBottomOf="@id/txtYaw"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:max="360"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>
