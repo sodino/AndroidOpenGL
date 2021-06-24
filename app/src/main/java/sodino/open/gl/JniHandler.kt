@@ -20,4 +20,7 @@ class JniHandler {
     external fun renderGL()
     external fun destroyGL()
     external fun onlyDrawLine(onlyLine : Boolean)
+
+    external fun setPitchAngle(angle : Int)
+    external fun setYawAngle(angle : Int)
 }

@@ -11,6 +11,7 @@ class GL3SurfaceView : GLSurfaceView {
     constructor(context : Context, attr : AttributeSet) : super(context, attr) {}
 
     private val renderer : GL3Renderer
+    val jniHandler: JniHandler
     init {
         setEGLContextClientVersion(3)
         // Pick an EGLConfig with RGB8 color, 16-bit depth, no stencil,
@@ -18,6 +19,8 @@ class GL3SurfaceView : GLSurfaceView {
         setEGLConfigChooser(8, 8, 8, 0, 16, 0)
         renderer = GL3Renderer(context.assets)
         setRenderer(renderer)
+
+        jniHandler = renderer.jni
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
