@@ -78,6 +78,10 @@ unsigned int VAO            = 0;           // vertex array object
 unsigned int VBO            = 0;           // vertex buffer object
 unsigned int texture0       = 0;           // texture `dog`
 unsigned int texture1       = 0;           // texture `flamingo`
+
+int degreePitch             = 0;
+int degreeYaw               = 0;
+int degreeRoll               = 0;
 // end : gl variable
 
 // begin : logic variable
@@ -281,9 +285,16 @@ void app_renderTriangle() {
 
     GLuint locModel = glGetUniformLocation(gProgram, "model");
     glm::mat4 mModel = glm::mat4(1.0f);
-    static float tmp = 0.0f;
-    tmp += 0.01f;
-    mModel = glm::rotate(mModel, tmp, glm::vec3(-0.5f, -1.0f, -1.0f));
+//    static float tmp = 0.0f;
+//    tmp += 0.01f;
+//    mModel = glm::rotate(mModel, tmp, glm::vec3(-0.5f, -1.0f, -1.0f));
+    float radianYaw = glm::radians(degreeYaw * 1.0f);
+    mModel = glm::rotate(mModel, radianYaw, glm::vec3(0.0f, 1.0f, 0.0f));
+    float radianPitch = glm::radians(degreePitch * 1.0f);
+    mModel = glm::rotate(mModel, radianPitch, glm::vec3(1.0f, 0.0f, 0.0f));
+    float radianRoll = glm::radians(degreeRoll * 1.0f);
+    mModel = glm::rotate(mModel, radianRoll, glm::vec3(0.0f, 0.0f, 1.0f));
+
     glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(mModel));
 
 
@@ -381,4 +392,16 @@ void app_destroyGL() {
 
 void app_onlyDrawLine(jboolean onlyLine) {
     onlyDrawLine = onlyLine;
+}
+
+void app_setPitchAngle(jint degree) {
+    degreePitch = degree;
+}
+
+void app_setYawAngle(jint degree) {
+    degreeYaw = degree;
+}
+
+void app_setRollAngle(jint degree) {
+    degreeRoll = degree;
 }

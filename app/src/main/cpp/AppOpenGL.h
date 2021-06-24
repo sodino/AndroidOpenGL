@@ -13,4 +13,8 @@ void app_initGL(jint width, jint height);
 void app_destroyGL();
 void app_onlyDrawLine(jboolean);
 
+void app_setPitchAngle(jint degree);
+void app_setYawAngle(jint degree);
+void app_setRollAngle(jint degree);
+
 #endif //ANDROIDOPENGL_APPOPENGL_H
