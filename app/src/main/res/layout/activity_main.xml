@@ -75,4 +75,25 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         />
+    <TextView
+        android:id="@+id/txtRoll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/seekBarYaw"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Angle of Roll : 0º"
+        android:textAllCaps="false"
+        />
+    <SeekBar
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/seekBarRoll"
+        app:layout_constraintTop_toBottomOf="@id/txtRoll"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:max="360"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

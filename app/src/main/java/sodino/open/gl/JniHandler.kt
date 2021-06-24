@@ -23,4 +23,5 @@ class JniHandler {
 
     external fun setPitchAngle(angle : Int)
     external fun setYawAngle(angle : Int)
+    external fun setRollAngle(angle : Int)
 }

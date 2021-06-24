@@ -30,6 +30,7 @@ class MainActivity :
 
         binding.seekBarPitch.setOnSeekBarChangeListener(this)
         binding.seekBarYaw.setOnSeekBarChangeListener(this)
+        binding.seekBarRoll.setOnSeekBarChangeListener(this)
     }
 
     private fun setDrawLineText(onlyLine : Boolean = false) {
@@ -67,6 +68,9 @@ class MainActivity :
         } else if (seekBar == binding.seekBarYaw) {
             binding.txtYaw.text = "Angle of Yaw : ${progress}º"
             jniHandler.setYawAngle(progress)
+        } else if (seekBar == binding.seekBarRoll) {
+            binding.txtYaw.text = "Angle of Roll : ${progress}º"
+            jniHandler.setRollAngle(progress)
         }
     }
 
