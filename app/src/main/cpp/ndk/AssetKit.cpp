@@ -1,7 +1,7 @@
 //
 // Created by sodino on 2021/6/19.
 //
-#include "AssetKit.h"
+#include "ndk/AssetKit.h"
 #include "jni.h"
 #include "malloc.h"
 AAssetManager* gAAssetMgr = NULL;
