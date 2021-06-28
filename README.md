@@ -1,6 +1,10 @@
 # AndroidOpenGL
 
 
+## 18. feature/eulerAngleCube
+
+Control the cube to rotate along the three axes x, y, z
+
 ## 17. feature/openGL_spinning
  2021.06.23
 
