@@ -9,6 +9,9 @@ cmake_minimum_required(VERSION 3.10.2)
 
 project("gl")
 
+# definition of library name (so name : libAppJNI.so)
+set(soName "AppJNI")
+
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds them for you.
@@ -16,7 +19,7 @@ project("gl")
 
 add_library(
         # Sets the name of the library.
-        AppJNI
+        ${soName}
 
         # Sets the library as a shared library.
         SHARED
@@ -27,6 +30,8 @@ add_library(
         AppOpenGL.cpp
         ndk/AssetKit.cpp
 )
+
+target_include_directories(${libName} PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
